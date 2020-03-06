@@ -9,7 +9,7 @@ class MainMenu extends StatefulWidget {
 class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
-    Color primaryColor = Color.fromRGBO(187, 223, 227, 1);
+    Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(240, 240, 240, 1),
@@ -35,7 +35,7 @@ class _MainMenuState extends State<MainMenu> {
                       onPressed: () {},
                     ),
                     IconButton(
-                      icon: Icon(Icons.notifications_none),
+                      icon: Icon(Icons.settings),
                       color: Colors.white,
                       iconSize: 30.0,
                       onPressed: () {},
@@ -67,6 +67,7 @@ class _MainMenuState extends State<MainMenu> {
                         children: <Widget>[
                           Text(
                             '2000.00',
+
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 30.0,
@@ -88,16 +89,19 @@ class _MainMenuState extends State<MainMenu> {
                       Material(
                         elevation: 1.0,
                         borderRadius: BorderRadius.circular(100.0),
-                        color: Color.fromRGBO(130, 178, 191, 1),
+                        color: Color.fromRGBO(232, 108, 0, 1),
                         child: MaterialButton(
-                          onPressed: () {},
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 30.0),
-                          child: Text(
-                            'TOP UP',
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/pemasukan',
+                              );
+                            },
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                          child: Text('TAMBAH',
                             style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.white,
+                              fontSize: 13.0,
+                              color: Colors.white
                             ),
                           ),
                         ),
