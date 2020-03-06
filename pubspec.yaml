@@ -17,8 +17,9 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  flutter_masked_text: ^0.8.0
+  pin_code_view: ^0.2.1
   bubble_tab_indicator: "^0.1.4"
-  flutter_masked_text: ^0.7.0
   flutter:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.

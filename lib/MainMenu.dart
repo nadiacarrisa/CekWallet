@@ -12,6 +12,7 @@ class _MainMenuState extends State<MainMenu> {
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(240, 240, 240, 1),
+      resizeToAvoidBottomPadding: false,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,10 +36,12 @@ class _MainMenuState extends State<MainMenu> {
                       onPressed: () {},
                     ),
                     IconButton(
-                      icon: Icon(Icons.notifications_none),
+                      icon: Icon(Icons.settings),
                       color: Colors.white,
                       iconSize: 30.0,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/setting');
+                      },
                     ),
                   ],
                 ),
@@ -83,6 +86,7 @@ class _MainMenuState extends State<MainMenu> {
                               color: Colors.white,
                               fontSize: 14.0,
                             ),
+                            textScaleFactor: 1.0,
                           ),
                         ],
                       ),
@@ -220,6 +224,7 @@ class _MainMenuState extends State<MainMenu> {
                                   'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
                                   'Lorem Ipsum has been the industry Lorem Ipsum is simply dummy text',
                                   textAlign: TextAlign.left,
+                                  textScaleFactor: 0.5,
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontWeight: FontWeight.bold,

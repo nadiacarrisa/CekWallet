@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:money_management/Settings.dart';
+import 'UbahLimit.dart';
 import 'MainMenu.dart';
 import 'History.dart';
 
@@ -16,6 +18,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/history',
       routes: <String, WidgetBuilder>{
         '/': (context) => MainMenu(),
+        '/setting': (context) => Settings(),
+        '/ubahlimit': (context) => UbahLimit(),
+        '/tentang': (context) => Tentang(),
+        '/keuntungan': (context) => Keuntungan(),
         '/history': (context) => History(),
       },
     );
