@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'MainMenu.dart';
+import 'History.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,9 +13,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: '/history',
       routes: <String, WidgetBuilder>{
         '/': (context) => MainMenu(),
+        '/history': (context) => History(),
       },
     );
   }
