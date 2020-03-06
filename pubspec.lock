@@ -29,6 +29,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  bubble_tab_indicator:
+    dependency: "direct main"
+    description:
+      name: bubble_tab_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   charcode:
     dependency: transitive
     description:
@@ -123,6 +130,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
+  pin_code_view:
+    dependency: "direct main"
+    description:
+      name: pin_code_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1"
   quiver:
     dependency: transitive
     description:

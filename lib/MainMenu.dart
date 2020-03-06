@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MainMenu extends StatefulWidget {
@@ -13,18 +12,20 @@ class _MainMenuState extends State<MainMenu> {
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(240, 240, 240, 1),
+      resizeToAvoidBottomPadding: false,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container( // buat bakcground yang warnanya biru ijo
+            Container(
+              // buat bakcground yang warnanya biru ijo
               width: double.infinity,
               decoration: BoxDecoration(
                 color: primaryColor,
                 border: Border.all(color: primaryColor),
               ),
               child: Padding(
-                padding: EdgeInsets.only(top: 30.0, right: 25.0, left: 15.0),
+                padding: EdgeInsets.only(top: 50.0, right: 25.0, left: 15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -38,7 +39,9 @@ class _MainMenuState extends State<MainMenu> {
                       icon: Icon(Icons.settings),
                       color: Colors.white,
                       iconSize: 30.0,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/setting');
+                      },
                     ),
                   ],
                 ),
@@ -57,7 +60,7 @@ class _MainMenuState extends State<MainMenu> {
                 ),
                 Padding(
                   padding:
-                  EdgeInsets.symmetric(horizontal: 25.0, vertical: 20.0),
+                      EdgeInsets.symmetric(horizontal: 25.0, vertical: 20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -67,7 +70,7 @@ class _MainMenuState extends State<MainMenu> {
                         children: <Widget>[
                           Text(
                             '2000.00',
-
+                            textScaleFactor: 1.0,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 30.0,
@@ -83,6 +86,7 @@ class _MainMenuState extends State<MainMenu> {
                               color: Colors.white,
                               fontSize: 14.0,
                             ),
+                            textScaleFactor: 1.0,
                           ),
                         ],
                       ),
@@ -221,8 +225,9 @@ class _MainMenuState extends State<MainMenu> {
                               Expanded(
                                 child: Text(
                                   'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
-                                      'Lorem Ipsum has been the industry Lorem Ipsum is simply dummy text',
+                                  'Lorem Ipsum has been the industry Lorem Ipsum is simply dummy text',
                                   textAlign: TextAlign.left,
+                                  textScaleFactor: 0.5,
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontWeight: FontWeight.bold,
@@ -267,13 +272,18 @@ class _MainMenuState extends State<MainMenu> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 2.0),
-                    child: Text(
-                      'Lebih Banyak',
-                      style: TextStyle(
-                        color: Colors.blue.withOpacity(0.7),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
+                    child: InkWell(
+                      child: Text(
+                        'Lebih Banyak',
+                        style: TextStyle(
+                          color: Colors.blue.withOpacity(0.7),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
+                        ),
                       ),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/history');
+                      },
                     ),
                   )
                 ],
@@ -352,8 +362,8 @@ class HistoryCards extends StatelessWidget {
 
   HistoryCards({this.title, this.value, this.time, this.cPrice});
 
-  Color checkColour(String tag){
-    if (tag=='+') {
+  Color checkColour(String tag) {
+    if (tag == '+') {
       return Color.fromRGBO(129, 255, 117, 1);
     } else {
       return Color.fromRGBO(255, 117, 117, 1);
@@ -387,7 +397,9 @@ class HistoryCards extends StatelessWidget {
                         color: Colors.black54,
                         fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 2.0,),
+                  SizedBox(
+                    height: 2.0,
+                  ),
                   Text(
                     title,
                     style: TextStyle(
@@ -400,9 +412,7 @@ class HistoryCards extends StatelessWidget {
               Text(
                 '$value',
                 style: TextStyle(
-                    fontSize: 22.0,
-                    color: cPrice,
-                    fontWeight: FontWeight.bold),
+                    fontSize: 22.0, color: cPrice, fontWeight: FontWeight.bold),
               ),
             ],
           ),

@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:money_management/Settings.dart';
+import 'UbahLimit.dart';
 import 'package:money_management/SplashScreen.dart';
 import 'MainMenu.dart';
+import 'History.dart';
 import 'EntryForm.dart';
 
 void main() => runApp(MyApp());
@@ -17,6 +19,11 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
+        '/setting': (context) => Settings(),
+        '/ubahlimit': (context) => UbahLimit(),
+        '/tentang': (context) => Tentang(),
+        '/keuntungan': (context) => Keuntungan(),
+        '/history': (context) => History(),
         '/': (context) => SplashScreenPage(),
         '/main': (context) => MainMenu(),
         '/pemasukan': (context) => EntryForm(),
