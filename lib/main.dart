@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/history',
+      initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/setting': (context) => Settings(),
         '/ubahlimit': (context) => UbahLimit(),
