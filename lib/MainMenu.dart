@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'ExpenseForm.dart';
+import 'EntryForm.dart';
+import 'dart:async';
+import 'models/Kategori.dart';
+import 'DBlite.dart';
 
 class MainMenu extends StatefulWidget {
   @override
@@ -6,11 +11,86 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+
+  DBLite dbHelper = new DBLite();
+  int _total;
+  int masuk, keluar;
+  List totalList;
+  void calTot() async{
+    totalList = await dbHelper.calculateTotalPemasukan();
+    totalList.forEach((harga){masuk = harga['Total'];});
+    //var total2 = (await dbHelper.calculateTotal2())[0]['Total'];
+    totalList = await dbHelper.calculateTotalPengeluaran();
+    totalList.forEach((harga){keluar = harga['Total'];});
+//    print(_total);
+    _total = masuk - keluar;
+    setState(() => _total = _total);
+  }
+
+  Future<Kategori> navigateToEntryForm(BuildContext context,
+      Kategori kat) async {
+    var result = await
+    Navigator.push(
+        context, MaterialPageRoute(
+        builder: (BuildContext context) {
+          return EntryForm(kat);
+        }
+    ));
+    return result;
+  }
+
+  Future<Kategori> navigateToExpenseForm(BuildContext context,
+      Kategori kat, String jenis) async {
+    var result = await
+    Navigator.push(
+        context, MaterialPageRoute(
+        builder: (BuildContext context) {
+          return ExpenseForm(jenis, kat);
+        }
+    ));
+    return result;
+  }
+
+  //NANTI...@HANDI
+//  @override
+//  void initState() {
+//    super.initState();
+//    updateListView();
+//  }
+//  void updateListView() {
+//    setState(() {
+//      future = dbHelper.getContactList();
+//    });
+//  }
+  
   @override
   Widget build(BuildContext context) {
     Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
-
+    this.calTot();
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromRGBO(0, 149, 218, 1),
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.android),
+              color: Colors.white,
+              iconSize: 30.0,
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.settings),
+              color: Colors.white,
+              iconSize: 30.0,
+              onPressed: () {
+                Navigator.pushNamed(context, '/setting');
+              },
+            ),
+          ],
+        ),
+      ),
       backgroundColor: Color.fromRGBO(240, 240, 240, 1),
       resizeToAvoidBottomPadding: false,
       body: SingleChildScrollView(
@@ -23,28 +103,6 @@ class _MainMenuState extends State<MainMenu> {
               decoration: BoxDecoration(
                 color: primaryColor,
                 border: Border.all(color: primaryColor),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(top: 50.0, right: 25.0, left: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.menu),
-                      color: Colors.white,
-                      iconSize: 30.0,
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.settings),
-                      color: Colors.white,
-                      iconSize: 30.0,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/setting');
-                      },
-                    ),
-                  ],
-                ),
               ),
             ),
             Stack(
@@ -69,7 +127,7 @@ class _MainMenuState extends State<MainMenu> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '2000.00',
+                            '$_total',
                             textScaleFactor: 1.0,
                             style: TextStyle(
                               color: Colors.white,
@@ -95,11 +153,15 @@ class _MainMenuState extends State<MainMenu> {
                         borderRadius: BorderRadius.circular(100.0),
                         color: Color.fromRGBO(232, 108, 0, 1),
                         child: MaterialButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/pemasukan',
-                              );
+                            onPressed: () async {
+                              var kategori = await navigateToEntryForm(context, null);
+                              if(kategori != null) {
+                                int result = await dbHelper.insertHistory(kategori);
+//                              NANTI...@HANDI
+//                                if (result > 0) {
+//                                  updateListView();
+//                               }
+                              }
                             },
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
                           child: Text('TAMBAH',
@@ -143,17 +205,19 @@ class _MainMenuState extends State<MainMenu> {
                                     color: Color.fromRGBO(187, 223, 227, 0.1),
                                     child: IconButton(
                                       padding: EdgeInsets.all(15.0),
-                                      icon: Icon(Icons.send),
+                                      icon: Icon(Icons.fastfood),
                                       color: Color.fromRGBO(96, 212, 224, 1),
                                       iconSize: 30,
-                                      onPressed: () {},
+                                      onPressed: () async{
+                                        RouteExpenseForm('Makanan');
+                                      },
                                     ),
                                   ),
                                   SizedBox(
                                     height: 8.0,
                                   ),
                                   Text(
-                                    'Send',
+                                    'Makanan',
                                     style: TextStyle(
                                       color: Colors.black54,
                                       fontWeight: FontWeight.bold,
@@ -168,17 +232,19 @@ class _MainMenuState extends State<MainMenu> {
                                     color: Color.fromRGBO(176, 209, 255, 0.07),
                                     child: IconButton(
                                       padding: EdgeInsets.all(15.0),
-                                      icon: Icon(Icons.credit_card),
+                                      icon: Icon(Icons.shopping_cart),
                                       color: Color.fromRGBO(117, 175, 255, 1),
                                       iconSize: 30,
-                                      onPressed: () {},
+                                        onPressed: () async{
+                                          RouteExpenseForm('Belanja');
+                                        },
                                     ),
                                   ),
                                   SizedBox(
                                     height: 8.0,
                                   ),
                                   Text(
-                                    'Pay',
+                                    'Belanja',
                                     style: TextStyle(
                                       color: Colors.black54,
                                       fontWeight: FontWeight.bold,
@@ -193,17 +259,19 @@ class _MainMenuState extends State<MainMenu> {
                                     color: Color.fromRGBO(255, 0, 174, 0.02),
                                     child: IconButton(
                                       padding: EdgeInsets.all(15.0),
-                                      icon: Icon(Icons.receipt),
+                                      icon: Icon(Icons.movie_filter),
                                       color: Color.fromRGBO(255, 0, 174, 0.61),
                                       iconSize: 30,
-                                      onPressed: () {},
+                                        onPressed: () async{
+                                          RouteExpenseForm('Hiburan');
+                                        },
                                     ),
                                   ),
                                   SizedBox(
                                     height: 8.0,
                                   ),
                                   Text(
-                                    'Request',
+                                    'Hiburan',
                                     style: TextStyle(
                                       color: Colors.black54,
                                       fontWeight: FontWeight.bold,
@@ -334,6 +402,19 @@ class _MainMenuState extends State<MainMenu> {
         ),
       ),
     );
+  }
+
+  void RouteExpenseForm(String jenis) async {
+    var kategori = await navigateToExpenseForm(
+        context, null, jenis);
+    if (kategori != null) {
+      int result = await dbHelper.insertHistory(
+          kategori);
+      //NANTI...@HANDI
+//      if (result > 0) {
+//        updateListView();
+//      }
+    }
   }
 }
 
