@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreenPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
       body: Center(
         child: Image.asset('images/flutterwithlogo.png', width: 200, height: 100,),
       ),

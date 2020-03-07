@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         '/history': (context) => History(),
         '/': (context) => SplashScreenPage(),
         '/main': (context) => MainMenu(),
-        '/pemasukan': (context) => EntryForm(),
+        '/pemasukan': (context) => EntryForm(null),
       },
     );
   }
