@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ExpenseForm.dart';
-import 'EntryForm.dart';
+import 'IncomeForm.dart';
 import 'dart:async';
 import 'models/Kategori.dart';
 import 'DBlite.dart';
@@ -13,27 +13,33 @@ class MainMenu extends StatefulWidget {
 class _MainMenuState extends State<MainMenu> {
 
   DBLite dbHelper = new DBLite();
-  int _total;
+  int _total= 0;
   int masuk, keluar;
   List totalList;
-  void calTot() async{
-    totalList = await dbHelper.calculateTotalPemasukan();
-    totalList.forEach((harga){masuk = harga['Total'];});
-    //var total2 = (await dbHelper.calculateTotal2())[0]['Total'];
+
+  void calTot() async {
+    masuk = (await dbHelper.calculateTotalPemasukan())[0]['Total'];
+    //totalList.forEach((harga){masuk = harga['Total'];});
     totalList = await dbHelper.calculateTotalPengeluaran();
     totalList.forEach((harga){keluar = harga['Total'];});
-//    print(_total);
     _total = masuk - keluar;
     setState(() => _total = _total);
   }
 
-  Future<Kategori> navigateToEntryForm(BuildContext context,
+
+  @override
+  void initState() {
+    calTot();
+    super.initState();
+  }
+
+  Future<Kategori> navigateToIncomeForm(BuildContext context,
       Kategori kat) async {
     var result = await
     Navigator.push(
         context, MaterialPageRoute(
         builder: (BuildContext context) {
-          return EntryForm(kat);
+          return IncomeForm(kat);
         }
     ));
     return result;
@@ -66,7 +72,7 @@ class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
-    this.calTot();
+    //calTot();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(0, 149, 218, 1),
@@ -154,9 +160,9 @@ class _MainMenuState extends State<MainMenu> {
                         color: Color.fromRGBO(232, 108, 0, 1),
                         child: MaterialButton(
                             onPressed: () async {
-                              var kategori = await navigateToEntryForm(context, null);
+                              var kategori = await navigateToIncomeForm(context, null);
                               if(kategori != null) {
-                                int result = await dbHelper.insertHistory(kategori);
+                                int result = await dbHelper.insertHistory(kategori).then((total){calTot();});
 //                              NANTI...@HANDI
 //                                if (result > 0) {
 //                                  updateListView();
@@ -409,7 +415,7 @@ class _MainMenuState extends State<MainMenu> {
         context, null, jenis);
     if (kategori != null) {
       int result = await dbHelper.insertHistory(
-          kategori);
+          kategori).then((total){calTot();});
       //NANTI...@HANDI
 //      if (result > 0) {
 //        updateListView();

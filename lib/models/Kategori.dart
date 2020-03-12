@@ -8,6 +8,7 @@ class Kategori {
 
   // konstruktor versi 1
   Kategori(this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
+  Kategori.withID(this._id, this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
 
   // konstruktor versi 2: konversi dari Map ke Contact
   Kategori.fromMap(Map<String, dynamic> map) {

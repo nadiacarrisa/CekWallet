@@ -5,24 +5,24 @@ import 'Validator.dart';
 import 'models/Kategori.dart';
 import 'package:intl/intl.dart';
 
-class EntryForm extends StatefulWidget {
+class IncomeForm extends StatefulWidget {
   final Kategori pemasukan;
-  EntryForm(this.pemasukan);
+  IncomeForm(this.pemasukan);
 
   @override
-  _EntryFormState createState() => _EntryFormState(this.pemasukan);
+  _IncomeFormState createState() => _IncomeFormState(this.pemasukan);
 }
 
-class _EntryFormState extends State<EntryForm> with Validation{
+class _IncomeFormState extends State<IncomeForm> with Validation{
   Kategori pemasukanState;
-  _EntryFormState(this.pemasukanState);
+  _IncomeFormState(this.pemasukanState);
 
   TextEditingController deskController = TextEditingController();
   TextEditingController jumlahController = MoneyMaskedTextController(initialValue: 0,thousandSeparator: '', precision: 0,decimalSeparator: '');
 
   final formKey = GlobalKey<FormState>();
   String jumlah = '';
-  DateTime dateTime;
+  DateTime dateTime= DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class _EntryFormState extends State<EntryForm> with Validation{
     if (pemasukanState != null) {
       deskController.text = pemasukanState.deskripsi;
       jumlahController.text = pemasukanState.jumlah.toString();
-      dateTime = pemasukanState.tanggal as DateTime;
+      dateTime =  DateTime.parse(pemasukanState.tanggal);
     }
 
     return Scaffold(
@@ -52,7 +52,7 @@ class _EntryFormState extends State<EntryForm> with Validation{
                     leading: Icon(Icons.calendar_today),
                     title: Text('Tanggal', style: TextStyle(fontSize: 15,)),
                     subtitle: Text(
-                        dateTime== null? DateFormat('dd MMMM yyyy').format(DateTime.now()).toString() : DateFormat('dd MMMM yyyy').format(dateTime).toString(),
+                        DateFormat('dd MMMM yyyy').format(dateTime).toString(),
                         style: TextStyle(fontSize: 25,)
                     ),
                     onTap: (){
@@ -132,10 +132,11 @@ class _EntryFormState extends State<EntryForm> with Validation{
                                     if(formKey.currentState.validate()){
                                       formKey.currentState.save();
                                       if (pemasukanState == null) {
-                                        pemasukanState = Kategori('Pemasukan', int.parse(jumlahController.text), dateTime.toString(), deskController.text, '0');
+                                        pemasukanState = Kategori('Pemasukan', int.parse(jumlahController.text), DateFormat('dd MMMM yyyy').format(dateTime).toString(), deskController.text, '0');
                                       } else {
                                         pemasukanState.deskripsi = deskController.text;
                                         pemasukanState.jumlah = int.parse(jumlahController.text);
+                                        pemasukanState.tanggal = DateFormat("dd MMMMM yyyy").format(dateTime).toString();
                                       }
                                       Navigator.pop(context, pemasukanState);
                                     }

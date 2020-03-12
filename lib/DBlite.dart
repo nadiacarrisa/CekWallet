@@ -114,10 +114,12 @@ class DBLite {
     print(result.toList());
     return result.toList();
   }
+
   Future<List> calculateTotalPengeluaran() async{
     Database db = await this.initDb();
     var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE tag='1'");
     print(result.toList());
     return result.toList();
   }
+
 }
