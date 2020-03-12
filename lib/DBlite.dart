@@ -9,6 +9,13 @@ class DBLite {
 
   static DBLite _dbHelper;
   static Database _database;
+  static const hisTable = 'history';
+  static const id = 'id';
+  static const kat = 'kategori';
+  static const jml = 'jumlah';
+  static const date = 'date';
+  static const desk = 'deskripsi';
+  static const tag = 'tag';
 
   DBLite._createObject();
 
@@ -20,8 +27,8 @@ class DBLite {
   }
 
   //future itu “tipe data” yang terpanggil dengan adanya delay atau “keterlambatan”, sistem akan terus menjalankan method tersebut sampai method itu selesai berjalan
-//async itu untuk menunggu fungsi yg terpanggil sehingga tidak terjadi blocking
-//await (method yg ditndai) harus menunggu hingga syntax/fungsi selesai
+  //async itu untuk menunggu fungsi yg terpanggil sehingga tidak terjadi blocking
+  //await (method yg ditndai) harus menunggu hingga syntax/fungsi selesai
   Future<Database> initDb() async {
     Directory directory = await getApplicationDocumentsDirectory();
     String path = directory.path + 'cekwallet.db';
@@ -31,9 +38,9 @@ class DBLite {
 
   void _createDb(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT);'
-            'CREATE TABLE limit ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER);'
-            'CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
+    'CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT);'
+    'CREATE TABLE limit ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER);'
+    'CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
   }
 
   Future<Database> get database async {
@@ -42,15 +49,6 @@ class DBLite {
     }
     return _database;
   }
-
-
-  static const hisTable = 'history';
-  static const id = 'id';
-  static const kat = 'kategori';
-  static const jml = 'jumlah';
-  static const date = 'date';
-  static const desk = 'deskripsi';
-  static const tag = 'tag';
 
 //bisa menggunakan db.raw : untuk butuh parameter query tertentu atau db.(EXEKUSINYA) untuk memasukkan semua record tanpa parameter
 
@@ -68,6 +66,7 @@ class DBLite {
     List<dynamic> params = [his.kategori, his.jumlah, his.tanggal, his.deskripsi, his.tag];
     final result = await db.rawInsert(sql, params);
     await db.close();
+    print("hai");
     return result;
   }
 
@@ -93,9 +92,9 @@ class DBLite {
     return result;
   }
 
-//untuk select bisa di edit dari sini untuk get beberapa atribut dgn ketentuan tertentu...
-//yg dibawah HANYA CONTOH untuk MENGAMBIL SEMUA DATA DI TABEL HISTORY
-//UNTUK PEMBUATAN LIST CARD YANG DIAMBIL DAR DATABASE: https://medium.com/komandro-ccit-ftui/tutorial-flutter-todo-list-dengan-sqlite-ffc2fa68f1e6
+  //untuk select bisa di edit dari sini untuk get beberapa atribut dgn ketentuan tertentu...
+  //yg dibawah HANYA CONTOH untuk MENGAMBIL SEMUA DATA DI TABEL HISTORY
+  //UNTUK PEMBUATAN LIST CARD YANG DIAMBIL DAR DATABASE: https://medium.com/komandro-ccit-ftui/tutorial-flutter-todo-list-dengan-sqlite-ffc2fa68f1e6
   Future<List<Kategori>> getHistoryList() async {
     Database db = await this.initDb();
     final sql = '''SELECT * FROM ${hisTable}''';
@@ -110,15 +109,19 @@ class DBLite {
   
   Future<List> calculateTotalPemasukan() async{
     Database db = await this.initDb();
+
     var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE tag='0'");
-    print(result.toList());
-    return result.toList();
+//    print(result.toList());
+//    db.close();
+    await db.close();
+    return result;
   }
 
   Future<List> calculateTotalPengeluaran() async{
     Database db = await this.initDb();
     var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE tag='1'");
-    print(result.toList());
+//    print(result.toList());
+    await db.close();
     return result.toList();
   }
 

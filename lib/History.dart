@@ -250,108 +250,185 @@ class HistoryCardsWithTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(right: 15.0, bottom: 10.0),
-      child: Container(
-        width: 120.0,
-        height: 80.0,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black54.withOpacity(0.05),
-              blurRadius: 2.0,
-              // has the effect of softening the shadow
-              spreadRadius: 0.2,
-              // has the effect of extending the shadow
-              offset: Offset(
-                0, // horizontal, move right 10
-                2.0, // vertical, move down 10
-              ),
-            )
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-          child: Row(
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        child: ListTile(
+//        leading: Icon(Icons.account_balance_wallet),
+          title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        time,
-                        style: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.blueGrey,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: tagColor,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black54.withOpacity(0.2),
-                                blurRadius: 2.0,
-                                // has the effect of softening the shadow
-                                spreadRadius: 0.2,
-                                // has the effect of extending the shadow
-                                offset: Offset(
-                                  0, // horizontal, move right 10
-                                  1.0, // vertical, move down 10
-                                ),
-                              )
-                            ],
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 2.0),
-                            child: Text(
-                              tag,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(64, 72, 79, 1),
-                              ),
+                  Text(
+                    time,
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.blueGrey,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: tagColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black54.withOpacity(0.2),
+                            blurRadius: 2.0,
+                            // has the effect of softening the shadow
+                            spreadRadius: 0.2,
+                            // has the effect of extending the shadow
+                            offset: Offset(
+                              0, // horizontal, move right 10
+                              1.0, // vertical, move down 10
                             ),
+                          )
+                        ],
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 2.0),
+                        child: Text(
+                          tag,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromRGBO(64, 72, 79, 1),
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Text(
-                    title,
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.w500),
-                  ),
+                      ),
+                    ),
+                  )
                 ],
               ),
+              SizedBox(
+                height: 10.0,
+              ),
               Text(
-                '$value',
+                title,
                 style: TextStyle(
-                    fontSize: 22.0,
-                    color: Color.fromRGBO(0, 132, 219, 0.4),
-                    fontWeight: FontWeight.bold),
+                    fontSize: 18.0,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.w500),
               ),
             ],
           ),
+          trailing: Text(
+            '$value',
+            style: TextStyle(
+                fontSize: 22.0,
+                color: Color.fromRGBO(0, 132, 219, 0.4),
+                fontWeight: FontWeight.bold),
+          ),
+//        onTap: (){Navigator.pushNamed(context, '/ubahlimit');},
         ),
       ),
     );
+
+//    return Padding(
+//      padding: EdgeInsets.only(right: 15.0, bottom: 10.0),
+//      child: Container(
+//        width: 120.0,
+//        height: 80.0,
+//        decoration: BoxDecoration(
+//          color: Colors.white,
+//          borderRadius: BorderRadius.all(
+//            Radius.circular(15.0),
+//          ),
+//          boxShadow: [
+//            BoxShadow(
+//              color: Colors.black54.withOpacity(0.05),
+//              blurRadius: 2.0,
+//              // has the effect of softening the shadow
+//              spreadRadius: 0.2,
+//              // has the effect of extending the shadow
+//              offset: Offset(
+//                0, // horizontal, move right 10
+//                2.0, // vertical, move down 10
+//              ),
+//            )
+//          ],
+//        ),
+//        child: Padding(
+//          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+//          child: Row(
+//            crossAxisAlignment: CrossAxisAlignment.start,
+//            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//            children: <Widget>[
+//              Column(
+//                crossAxisAlignment: CrossAxisAlignment.start,
+//                children: <Widget>[
+//                  Row(
+//                    children: <Widget>[
+//                      Text(
+//                        time,
+//                        style: TextStyle(
+//                            fontSize: 15.0,
+//                            color: Colors.blueGrey,
+//                            fontWeight: FontWeight.bold),
+//                      ),
+//                      Padding(
+//                        padding: EdgeInsets.only(left: 10.0),
+//                        child: Container(
+//                          decoration: BoxDecoration(
+//                            color: tagColor,
+//                            borderRadius:
+//                                BorderRadius.all(Radius.circular(20.0)),
+//                            boxShadow: [
+//                              BoxShadow(
+//                                color: Colors.black54.withOpacity(0.2),
+//                                blurRadius: 2.0,
+//                                // has the effect of softening the shadow
+//                                spreadRadius: 0.2,
+//                                // has the effect of extending the shadow
+//                                offset: Offset(
+//                                  0, // horizontal, move right 10
+//                                  1.0, // vertical, move down 10
+//                                ),
+//                              )
+//                            ],
+//                          ),
+//                          child: Padding(
+//                            padding: EdgeInsets.symmetric(
+//                                horizontal: 12.0, vertical: 2.0),
+//                            child: Text(
+//                              tag,
+//                              style: TextStyle(
+//                                fontWeight: FontWeight.w700,
+//                                color: Color.fromRGBO(64, 72, 79, 1),
+//                              ),
+//                            ),
+//                          ),
+//                        ),
+//                      )
+//                    ],
+//                  ),
+//                  SizedBox(
+//                    height: 5.0,
+//                  ),
+//                  Text(
+//                    title,
+//                    style: TextStyle(
+//                        fontSize: 18.0,
+//                        color: Colors.black54,
+//                        fontWeight: FontWeight.w500),
+//                  ),
+//                ],
+//              ),
+//              Text(
+//                '$value',
+//                style: TextStyle(
+//                    fontSize: 22.0,
+//                    color: Color.fromRGBO(0, 132, 219, 0.4),
+//                    fontWeight: FontWeight.bold),
+//              ),
+//            ],
+//          ),
+//        ),
+//      ),
+//    );
   }
 }
 
@@ -363,10 +440,7 @@ class HistoryCardsWithOutTag extends StatelessWidget {
   Color color = Color.fromRGBO(153, 153, 153, 0.07);
 
   HistoryCardsWithOutTag(
-      {this.title = "",
-        this.value = 0,
-        this.time,
-        this.cPrice});
+      {this.title = "", this.value = 0, this.time, this.cPrice});
 
   Color checkColour(String tag) {
     if (tag == '+') {
@@ -378,71 +452,48 @@ class HistoryCardsWithOutTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(right: 15.0, bottom: 10.0),
-      child: Container(
-        width: 120.0,
-        height: 80.0,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black54.withOpacity(0.05),
-              blurRadius: 2.0,
-              // has the effect of softening the shadow
-              spreadRadius: 0.2,
-              // has the effect of extending the shadow
-              offset: Offset(
-                0, // horizontal, move right 10
-                2.0, // vertical, move down 10
-              ),
-            )
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-          child: Row(
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        child: ListTile(
+//        leading: Icon(Icons.account_balance_wallet),
+          title: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        time,
-                        style: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.blueGrey,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  Text(
+                    time,
+                    style: TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: 5.0,
+                    height: 7.0,
                   ),
                   Text(
                     title,
                     style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.black54,
-                        fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-              Text(
-                '$value',
-                style: TextStyle(
-                    fontSize: 22.0,
-                    color: Color.fromRGBO(0, 132, 219, 0.4),
-                    fontWeight: FontWeight.bold),
-              ),
             ],
           ),
+          trailing: Text(
+            '$value',
+            style: TextStyle(
+                fontSize: 22.0,
+                color: Color.fromRGBO(0, 132, 219, 0.4),
+                fontWeight: FontWeight.bold),
+          ),
+//        onTap: (){Navigator.pushNamed(context, '/ubahlimit');},
         ),
       ),
     );

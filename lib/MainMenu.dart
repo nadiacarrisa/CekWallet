@@ -11,19 +11,29 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-
   DBLite dbHelper = new DBLite();
   int _total= 0;
   int masuk, keluar;
   List totalList;
 
   void calTot() async {
-    masuk = (await dbHelper.calculateTotalPemasukan())[0]['Total'];
-    //totalList.forEach((harga){masuk = harga['Total'];});
+    totalList = await dbHelper.calculateTotalPemasukan();
+//    totalList.forEach(
+//      (harga) {
+//        masuk = harga['Total'];
+//      },
+//    );
+    //var total2 = (await dbHelper.calculateTotal2())[0]['Total'];
     totalList = await dbHelper.calculateTotalPengeluaran();
-    totalList.forEach((harga){keluar = harga['Total'];});
+//    print(totalList.length);
+    totalList.forEach(
+      (harga) {
+        keluar = harga['Total'];
+      },
+    );
+    print(_total);
     _total = masuk - keluar;
-    setState(() => _total = _total);
+    setState(() => this._total = _total);
   }
 
 
@@ -45,15 +55,12 @@ class _MainMenuState extends State<MainMenu> {
     return result;
   }
 
-  Future<Kategori> navigateToExpenseForm(BuildContext context,
-      Kategori kat, String jenis) async {
-    var result = await
-    Navigator.push(
-        context, MaterialPageRoute(
-        builder: (BuildContext context) {
-          return ExpenseForm(jenis, kat);
-        }
-    ));
+  Future<Kategori> navigateToExpenseForm(
+      BuildContext context, Kategori kat, String jenis) async {
+    var result = await Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext context) {
+      return ExpenseForm(jenis, kat);
+    }));
     return result;
   }
 
@@ -68,11 +75,12 @@ class _MainMenuState extends State<MainMenu> {
 //      future = dbHelper.getContactList();
 //    });
 //  }
-  
+
   @override
   Widget build(BuildContext context) {
+    this.calTot();
+//    print('sada');
     Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
-    //calTot();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(0, 149, 218, 1),
@@ -167,14 +175,14 @@ class _MainMenuState extends State<MainMenu> {
 //                                if (result > 0) {
 //                                  updateListView();
 //                               }
-                              }
-                            },
-                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-                          child: Text('TAMBAH',
-                            style: TextStyle(
-                              fontSize: 13.0,
-                              color: Colors.white
-                            ),
+                            }
+                          },
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 30.0),
+                          child: Text(
+                            'TAMBAH',
+                            style:
+                                TextStyle(fontSize: 13.0, color: Colors.white),
                           ),
                         ),
                       ),
@@ -214,7 +222,7 @@ class _MainMenuState extends State<MainMenu> {
                                       icon: Icon(Icons.fastfood),
                                       color: Color.fromRGBO(96, 212, 224, 1),
                                       iconSize: 30,
-                                      onPressed: () async{
+                                      onPressed: () async {
                                         RouteExpenseForm('Makanan');
                                       },
                                     ),
@@ -241,9 +249,9 @@ class _MainMenuState extends State<MainMenu> {
                                       icon: Icon(Icons.shopping_cart),
                                       color: Color.fromRGBO(117, 175, 255, 1),
                                       iconSize: 30,
-                                        onPressed: () async{
-                                          RouteExpenseForm('Belanja');
-                                        },
+                                      onPressed: () async {
+                                        RouteExpenseForm('Belanja');
+                                      },
                                     ),
                                   ),
                                   SizedBox(
@@ -268,9 +276,9 @@ class _MainMenuState extends State<MainMenu> {
                                       icon: Icon(Icons.movie_filter),
                                       color: Color.fromRGBO(255, 0, 174, 0.61),
                                       iconSize: 30,
-                                        onPressed: () async{
-                                          RouteExpenseForm('Hiburan');
-                                        },
+                                      onPressed: () async {
+                                        RouteExpenseForm('Hiburan');
+                                      },
                                     ),
                                   ),
                                   SizedBox(
@@ -364,7 +372,7 @@ class _MainMenuState extends State<MainMenu> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 35.0, bottom: 25.0),
+              padding: EdgeInsets.only(left: 25.0, bottom: 25.0, right: 25.0),
               child: Container(
                 height: 400.0,
                 child: ListView(
@@ -400,6 +408,24 @@ class _MainMenuState extends State<MainMenu> {
                       cPrice: Color.fromRGBO(119, 184, 116, 1),
                       time: '13.02',
                     ),
+                    HistoryCards(
+                      title: 'Tagihan Listrik',
+                      value: 32000,
+                      cPrice: Color.fromRGBO(119, 184, 116, 1),
+                      time: '13.02',
+                    ),
+                    HistoryCards(
+                      title: 'Tagihan Listrik',
+                      value: 32000,
+                      cPrice: Color.fromRGBO(119, 184, 116, 1),
+                      time: '13.02',
+                    ),
+                    HistoryCards(
+                      title: 'Tagihan Listrik',
+                      value: 32000,
+                      cPrice: Color.fromRGBO(119, 184, 116, 1),
+                      time: '13.02',
+                    ),
                   ],
                 ),
               ),
@@ -411,8 +437,7 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   void RouteExpenseForm(String jenis) async {
-    var kategori = await navigateToExpenseForm(
-        context, null, jenis);
+    var kategori = await navigateToExpenseForm(context, null, jenis);
     if (kategori != null) {
       int result = await dbHelper.insertHistory(
           kategori).then((total){calTot();});
@@ -459,18 +484,13 @@ class HistoryCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(right: 15.0, bottom: 10.0),
-      child: Container(
-        width: 120.0,
-        height: 70.0,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-          child: Row(
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        child: ListTile(
+//        leading: Icon(Icons.account_balance_wallet),
+          title: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -485,7 +505,7 @@ class HistoryCards extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: 2.0,
+                    height: 7.0,
                   ),
                   Text(
                     title,
@@ -496,13 +516,14 @@ class HistoryCards extends StatelessWidget {
                   ),
                 ],
               ),
-              Text(
-                '$value',
-                style: TextStyle(
-                    fontSize: 22.0, color: cPrice, fontWeight: FontWeight.bold),
-              ),
             ],
           ),
+          trailing: Text(
+            '$value',
+            style: TextStyle(
+                fontSize: 22.0, color: cPrice, fontWeight: FontWeight.bold),
+          ),
+//        onTap: (){Navigator.pushNamed(context, '/ubahlimit');},
         ),
       ),
     );
