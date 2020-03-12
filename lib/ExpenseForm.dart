@@ -24,7 +24,7 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
 
   final formKey = GlobalKey<FormState>();
   String jumlah = '';
-  DateTime dateTime;
+  DateTime dateTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
     if (pengeluaranState != null) {
       deskController.text = pengeluaranState.deskripsi;
       jumlahController.text = pengeluaranState.jumlah.toString();
-      dateTime = pengeluaranState.tanggal as DateTime;
+      dateTime = DateTime.parse(pengeluaranState.tanggal);
     }
 
     return Scaffold(
@@ -54,7 +54,7 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                   leading: Icon(Icons.calendar_today),
                   title: Text('Tanggal', style: TextStyle(fontSize: 15,)),
                   subtitle: Text(
-                      dateTime== null? DateFormat('dd MMMM yyyy').format(DateTime.now()).toString() : DateFormat('dd MMMM yyyy').format(dateTime).toString(),
+                      DateFormat('dd MMMM yyyy').format(dateTime).toString(),
                       style: TextStyle(fontSize: 25,)
                   ),
                   onTap: (){
@@ -142,10 +142,11 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                                   if(formKey.currentState.validate()){
                                     formKey.currentState.save();
                                     if (pengeluaranState == null) {
-                                      pengeluaranState = Kategori('${widget.jenis}', int.parse(jumlahController.text), dateTime.toString(), deskController.text, '1');
+                                      pengeluaranState = Kategori('${widget.jenis}', int.parse(jumlahController.text), DateFormat('dd MMMM yyyy').format(dateTime).toString(), deskController.text, '1');
                                     } else {
                                       pengeluaranState.deskripsi = deskController.text;
                                       pengeluaranState.jumlah = int.parse(jumlahController.text);
+                                      pengeluaranState.tanggal = DateFormat('dd MMMM yyyy').format(dateTime).toString();
                                     }
                                     Navigator.pop(context,pengeluaranState);
                                   }
