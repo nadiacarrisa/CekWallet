@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:money_management/HistoryPage.dart';
 import 'ExpenseForm.dart';
 import 'IncomeForm.dart';
 import 'dart:async';
 import 'models/Kategori.dart';
-import 'DBlite.dart';
+import 'models/History.dart';
+import 'services/DBlite.dart';
+import 'services/HistoryService.dart';
 
 class MainMenu extends StatefulWidget {
   @override
@@ -11,75 +14,115 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  DBLite dbHelper = new DBLite();
-  int _total= 0;
+  int _total = 0;
   int masuk, keluar;
   List totalList;
+  List<Widget> cardList = [];
+  DBLite dbHelper = new DBLite();
+  HistoryCon dbHistory = new HistoryCon();
+  HistoryCards historyCardList = new HistoryCards();
 
   void calTot() async {
     totalList = await dbHelper.calculateTotalPemasukan();
-//    totalList.forEach(
-//      (harga) {
-//        masuk = harga['Total'];
-//      },
-//    );
-    //var total2 = (await dbHelper.calculateTotal2())[0]['Total'];
+    totalList.forEach(
+      (harga) {
+        masuk = harga['Total'];
+      },
+    );
+
     totalList = await dbHelper.calculateTotalPengeluaran();
-//    print(totalList.length);
     totalList.forEach(
       (harga) {
         keluar = harga['Total'];
       },
     );
-    print(_total);
+
     _total = masuk - keluar;
     setState(() => this._total = _total);
   }
 
+  void getList() async {
+    List cList = new List();
+    List<Widget> _cardList = new List();
+    String tgl = '';
+    Widget dateText;
+    cList = await dbHistory.getHistoryList(10);
+    Color col;
+    String tag;
+    cList.forEach(
+      (history) {
+        if (history['tag'] == '0') {
+          col = Color.fromRGBO(61, 153, 75, 0.8);
+          tag = '+';
+        } else {
+          col = Color.fromRGBO(237, 85, 85, 0.8);
+          tag = '-';
+        }
+
+        if (tgl != history['date']) {
+          tgl = history['date'];
+          dateText = Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            child: Text(
+              tgl,
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+          _cardList.add(dateText);
+        }
+
+        HistoryCards hc = new HistoryCards(
+          title: history['deskripsi'],
+          value: history['jumlah'],
+          time: history['date'],
+          cPrice: col,
+          tag: tag,
+          tagLabel: history['kategori'],
+        );
+        _cardList.add(hc.cards());
+      },
+    );
+    setState(() => this.cardList = _cardList);
+  }
 
   @override
   void initState() {
     calTot();
+    getList();
     super.initState();
   }
 
-  Future<Kategori> navigateToIncomeForm(BuildContext context,
-      Kategori kat) async {
-    var result = await
-    Navigator.push(
-        context, MaterialPageRoute(
+  Future<Kategori> navigateToIncomeForm(
+      BuildContext context, Kategori kat) async {
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(
         builder: (BuildContext context) {
           return IncomeForm(kat);
-        }
-    ));
+        },
+      ),
+    );
     return result;
   }
 
   Future<Kategori> navigateToExpenseForm(
       BuildContext context, Kategori kat, String jenis) async {
-    var result = await Navigator.push(context,
-        MaterialPageRoute(builder: (BuildContext context) {
-      return ExpenseForm(jenis, kat);
-    }));
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return ExpenseForm(jenis, kat);
+        },
+      ),
+    );
     return result;
   }
 
-  //NANTI...@HANDI
-//  @override
-//  void initState() {
-//    super.initState();
-//    updateListView();
-//  }
-//  void updateListView() {
-//    setState(() {
-//      future = dbHelper.getContactList();
-//    });
-//  }
-
   @override
   Widget build(BuildContext context) {
-    this.calTot();
-//    print('sada');
     Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
     return Scaffold(
       appBar: AppBar(
@@ -167,10 +210,16 @@ class _MainMenuState extends State<MainMenu> {
                         borderRadius: BorderRadius.circular(100.0),
                         color: Color.fromRGBO(232, 108, 0, 1),
                         child: MaterialButton(
-                            onPressed: () async {
-                              var kategori = await navigateToIncomeForm(context, null);
-                              if(kategori != null) {
-                                int result = await dbHelper.insertHistory(kategori).then((total){calTot();});
+                          onPressed: () async {
+                            var kategori =
+                                await navigateToIncomeForm(context, null);
+                            if (kategori != null) {
+                              int result = await dbHistory
+                                  .insertHistory(kategori)
+                                  .then((total) {
+                                calTot();
+                                getList();
+                              });
 //                              NANTI...@HANDI
 //                                if (result > 0) {
 //                                  updateListView();
@@ -377,56 +426,7 @@ class _MainMenuState extends State<MainMenu> {
                 height: 400.0,
                 child: ListView(
                   scrollDirection: Axis.vertical,
-                  children: <Widget>[
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(119, 184, 116, 1),
-                      time: '13.02',
-                    ),
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(255, 117, 117, 1),
-                      time: '13.02',
-                    ),
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(255, 117, 117, 1),
-                      time: '13.02',
-                    ),
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(119, 184, 116, 1),
-                      time: '13.02',
-                    ),
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(119, 184, 116, 1),
-                      time: '13.02',
-                    ),
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(119, 184, 116, 1),
-                      time: '13.02',
-                    ),
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(119, 184, 116, 1),
-                      time: '13.02',
-                    ),
-                    HistoryCards(
-                      title: 'Tagihan Listrik',
-                      value: 32000,
-                      cPrice: Color.fromRGBO(119, 184, 116, 1),
-                      time: '13.02',
-                    ),
-                  ],
+                  children: cardList,
                 ),
               ),
             ),
@@ -439,12 +439,10 @@ class _MainMenuState extends State<MainMenu> {
   void RouteExpenseForm(String jenis) async {
     var kategori = await navigateToExpenseForm(context, null, jenis);
     if (kategori != null) {
-      int result = await dbHelper.insertHistory(
-          kategori).then((total){calTot();});
-      //NANTI...@HANDI
-//      if (result > 0) {
-//        updateListView();
-//      }
+      int result = await dbHistory.insertHistory(kategori).then((total) {
+        calTot();
+        getList();
+      });
     }
   }
 }
@@ -453,7 +451,6 @@ class CustomShapeClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();
-
     path.lineTo(0.0, 390.0 - 200);
     path.quadraticBezierTo(size.width / 2, 280, size.width, 390.0 - 200.0);
     path.lineTo(size.width, 0.0);
@@ -465,31 +462,28 @@ class CustomShapeClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
 
-class HistoryCards extends StatelessWidget {
+class HistoryCards {
   String title;
-  double value;
+  int value;
   String time;
   Color cPrice;
-  Color color = Color.fromRGBO(153, 153, 153, 0.07);
+  String tagLabel;
+  String tag;
 
-  HistoryCards({this.title, this.value, this.time, this.cPrice});
+  HistoryCards(
+      {this.title,
+      this.value,
+      this.time,
+      this.cPrice,
+      this.tag,
+      this.tagLabel});
 
-  Color checkColour(String tag) {
-    if (tag == '+') {
-      return Color.fromRGBO(129, 255, 117, 1);
-    } else {
-      return Color.fromRGBO(255, 117, 117, 1);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget cards() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 3.0),
         child: ListTile(
-//        leading: Icon(Icons.account_balance_wallet),
           title: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -497,12 +491,39 @@ class HistoryCards extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    time,
-                    style: TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(224, 224, 224, 1),
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black54.withOpacity(0.2),
+                              blurRadius: 2.0,
+                              // has the effect of softening the shadow
+                              spreadRadius: 0.2,
+                              // has the effect of extending the shadow
+                              offset: Offset(
+                                0, // horizontal, move right 10
+                                1.0, // vertical, move down 10
+                              ),
+                            )
+                          ],
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 2.0),
+                          child: Text(
+                            tagLabel,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: Color.fromRGBO(64, 72, 79, 1),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 7.0,
@@ -519,9 +540,12 @@ class HistoryCards extends StatelessWidget {
             ],
           ),
           trailing: Text(
-            '$value',
+            '$tag' + ' Rp' + '$value',
             style: TextStyle(
-                fontSize: 22.0, color: cPrice, fontWeight: FontWeight.bold),
+              fontSize: 18.0,
+              color: cPrice,
+              fontWeight: FontWeight.bold,
+            ),
           ),
 //        onTap: (){Navigator.pushNamed(context, '/ubahlimit');},
         ),

@@ -3,7 +3,7 @@ import 'package:money_management/Settings.dart';
 import 'UbahLimit.dart';
 import 'package:money_management/SplashScreen.dart';
 import 'MainMenu.dart';
-import 'History.dart';
+import 'HistoryPage.dart';
 import 'IncomeForm.dart';
 
 void main() => runApp(MyApp());
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         '/ubahlimit': (context) => UbahLimit(),
         '/tentang': (context) => Tentang(),
         '/keuntungan': (context) => Keuntungan(),
-        '/history': (context) => History(),
+        '/history': (context) => HistoryPage(),
         '/': (context) => SplashScreenPage(),
         '/main': (context) => MainMenu(),
         '/pemasukan': (context) => IncomeForm(null),
