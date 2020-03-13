@@ -17,6 +17,11 @@ class DBLite{
   static const DESKRIPSI = 'deskripsi';
   static const TAG = 'tag';
 
+  static const LIMIT_TABLE = 'limit';
+  static const ID_LIMIT = 'id';
+  static const KATEGORI_LIMIT = 'kategori';
+  static const JUMLAH_LIMIT = 'jumlah';
+
   DBLite._createObject();
 
   //default constructor, karena ada constructor kedua yaitu factory DBLite()
@@ -42,8 +47,8 @@ class DBLite{
 
   void _createDb(Database db, int version) async {
     await db.execute(
-    'CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT);'
-    'CREATE TABLE limit ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER);'
+    'CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT, monthYear TEXT);'
+    'CREATE TABLE limit ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER DEFAULT 0);'
     'CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
   }
 

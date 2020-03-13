@@ -31,8 +31,8 @@ class HistoryCon extends DBLite {
   Future<int> updateHistory(Kategori his) async {
     Database db = await this.initDb();
     final sql = '''UPDATE ${DBLite.HISTORY_TABLE}
-    SET ${his.deskripsi} = ?, ${his.jumlah} = ?, ${his.tanggal} = ?
-    WHERE ${his.id} = ?
+    SET ${DBLite.DESKRIPSI} = ?, ${DBLite.JUMLAH} = ?, ${DBLite.DATE} = ?
+    WHERE ${DBLite.ID} = ?
     ''';
     List<dynamic> params = [his.deskripsi, his.jumlah, his.tanggal,his.id];
     final result = await db.rawUpdate(sql, params);
@@ -42,7 +42,7 @@ class HistoryCon extends DBLite {
   Future<int> deleteHistory(Kategori his) async {
     Database db = await this.initDb();
     final sql = '''DELETE FROM ${DBLite.HISTORY_TABLE}
-    WHERE ${his.id} = ?
+    WHERE ${DBLite.ID} = ?
     ''';
     List<dynamic> params = [his.id];
     final result = await db.rawDelete(sql, params);

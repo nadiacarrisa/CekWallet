@@ -5,8 +5,10 @@ class Kategori {
   String _tag;
   String _tanggal;
   String _deskripsi;
+  String bulanTahun;
 
   // konstruktor versi 1
+  Kategori.withMontYear(this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag, this.bulanTahun);
   Kategori(this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
   Kategori.withID(this._id, this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
 

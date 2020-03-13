@@ -37,7 +37,13 @@ class _MainMenuState extends State<MainMenu> {
       },
     );
 
-    _total = masuk - keluar;
+    if(masuk!=null && keluar !=null){
+      _total = masuk - keluar;
+    }else if(keluar==null){
+      _total = 0 + masuk;
+    }else{
+      _total = 0 - keluar;
+    }
     setState(() => this._total = _total);
   }
 

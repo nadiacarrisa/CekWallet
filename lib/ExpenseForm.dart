@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter/src/material/date_picker.dart';
+import 'package:money_management/services/LimitService.dart';
 import 'Validator.dart';
 import 'package:intl/intl.dart';
 import 'models/Kategori.dart';
+import 'services/DBlite.dart';
 
 class ExpenseForm extends StatefulWidget {
   final String jenis;
@@ -15,6 +17,7 @@ class ExpenseForm extends StatefulWidget {
 }
 
 class _ExpenseFormState extends State<ExpenseForm> with Validation{
+  LimitCon limitDb = LimitCon();
   Kategori pengeluaranState;
   String jenisState;
   _ExpenseFormState(this.pengeluaranState, this.jenisState);
@@ -23,8 +26,40 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
   TextEditingController jumlahController = MoneyMaskedTextController(initialValue: 0,thousandSeparator: '', precision: 0,decimalSeparator: '');
 
   final formKey = GlobalKey<FormState>();
+  List limit;
   String jumlah = '';
   DateTime dateTime = DateTime.now();
+
+  void isLimited(Kategori k) async{
+    limit = await limitDb.checkLimit(k);
+    var jml;
+    limit.forEach(
+          (jmlLimit) {
+            jml = jmlLimit['jumlah'];
+            },
+    );
+    if(jml!=0 && k.jumlah > 0.75 * jml){
+      AlertDialog alert = AlertDialog(
+        title: Text("AWAS"),
+        content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
+        actions: [
+          FlatButton(
+            child: Text("OK"),
+            onPressed: () { },
+          ),
+        ],
+      );
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alert;
+          },
+      );
+    }
+    else{
+      Navigator.pop(context,k);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,13 +177,18 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                                   if(formKey.currentState.validate()){
                                     formKey.currentState.save();
                                     if (pengeluaranState == null) {
-                                      pengeluaranState = Kategori('${widget.jenis}', int.parse(jumlahController.text), DateFormat('dd MMMM yyyy').format(dateTime).toString(), deskController.text, '1');
+                                      pengeluaranState = Kategori.withMontYear('${widget.jenis}',
+                                          int.parse(jumlahController.text),
+                                          DateFormat('dd MMMM yyyy').format(dateTime).toString(),
+                                          deskController.text, '1',
+                                          DateFormat('MM yyyy').format(dateTime).toString()
+                                      );
                                     } else {
                                       pengeluaranState.deskripsi = deskController.text;
                                       pengeluaranState.jumlah = int.parse(jumlahController.text);
                                       pengeluaranState.tanggal = DateFormat('dd MMMM yyyy').format(dateTime).toString();
                                     }
-                                    Navigator.pop(context,pengeluaranState);
+                                    this.isLimited(pengeluaranState);
                                   }
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
