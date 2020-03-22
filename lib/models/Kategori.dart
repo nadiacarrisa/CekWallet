@@ -1,4 +1,4 @@
-class Kategori {
+class History {
   int _id;
   String _kategori;
   int _jumlah;
@@ -8,12 +8,12 @@ class Kategori {
   String bulanTahun;
 
   // konstruktor versi 1
-  Kategori.withMontYear(this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag, this.bulanTahun);
-  Kategori(this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
-  Kategori.withID(this._id, this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
+  History.withMontYear(this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag, this.bulanTahun);
+  History(this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
+  History.withID(this._id, this._kategori, this._jumlah, this._tanggal, this._deskripsi, this._tag);
 
   // konstruktor versi 2: konversi dari Map ke Contact
-  Kategori.fromMap(Map<String, dynamic> map) {
+  History.fromMap(Map<String, dynamic> map) {
     this._id = map['id'];
     this._kategori = map['kategori'];
     this._jumlah = map['jumlah'];

@@ -2,34 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter/src/material/date_picker.dart';
 import 'package:money_management/services/LimitService.dart';
-import 'package:moneytextformfield/moneytextformfield.dart';
 import 'Validator.dart';
 import 'package:intl/intl.dart';
 import 'models/History.dart';
-import 'services/DBlite.dart';
 
-class ExpenseForm extends StatefulWidget {
-  final String jenis;
-  final History pengeluaran;
-  ExpenseForm(this.jenis, this.pengeluaran);
+class EditForm extends StatefulWidget {
+  final History edit;
+  EditForm(this.edit);
 
   @override
-  _ExpenseFormState createState() => _ExpenseFormState(this.pengeluaran, this.jenis);
+  _EditFormState createState() => _EditFormState(this.edit);
 }
 
-class _ExpenseFormState extends State<ExpenseForm> with Validation{
+class _EditFormState extends State<EditForm> with Validation{
   LimitCon limitDb = LimitCon();
-  History pengeluaranState;
-  String jenisState;
-  _ExpenseFormState(this.pengeluaranState, this.jenisState);
+  History editState;
+  _EditFormState(this.editState);
 
   TextEditingController deskController = TextEditingController();
   TextEditingController jumlahController = MoneyMaskedTextController(initialValue: 0,thousandSeparator: '', precision: 0,decimalSeparator: '');
-
+  String dropdownJenis;
+  String dropdownKategori;
   final formKey = GlobalKey<FormState>();
   List limit,total;
   String jumlah = '';
   DateTime dateTime = DateTime.now();
+  String Formatter;
+  bool viewVisible = false;
 
 
   void isLimited(History k) async{
@@ -75,17 +74,29 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    deskController.text = editState.deskripsi;
+    jumlahController.text = editState.jumlah.toString();
+    Formatter= editState.date;
+    if(editState.kategori == 'Pemasukan'){
+      dropdownJenis = editState.kategori;
+    }else{
+      dropdownJenis = 'Pengeluaran';
+      dropdownKategori = editState.kategori;
+      viewVisible = true;
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
-    if (pengeluaranState != null) {
-      deskController.text = pengeluaranState.deskripsi;
-      jumlahController.text = pengeluaranState.jumlah.toString();
-      dateTime = DateTime.parse(pengeluaranState.date);
-    }
+
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pengeluaran'),
+        title: Text('Edit'),
         backgroundColor: Color.fromRGBO(0, 149, 218, 1),
       ),
       body: ListView(
@@ -102,13 +113,14 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                   leading: Icon(Icons.calendar_today),
                   title: Text('Tanggal', style: TextStyle(fontSize: 15,)),
                   subtitle: Text(
-                      DateFormat('dd MMMM yyyy').format(dateTime).toString(),
+                      Formatter,
                       style: TextStyle(fontSize: 25,)
                   ),
                   onTap: (){
                     showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2019), lastDate: DateTime(2021)).then((date){
                       if(date!=null){
                         setState(() {
+                          Formatter = DateFormat('dd MMMM yyyy').format(date).toString();
                           dateTime = date;
                         });
                       }
@@ -130,12 +142,62 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                 key: formKey,
                 child: Column(
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: ListTile(
-                        title: Text('${widget.jenis}',
-                          style: TextStyle(fontSize: 15),
-                        ),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          DropdownButton(
+                            value: dropdownJenis,
+                            icon: Icon(Icons.keyboard_arrow_down),
+                            iconSize: 24,
+                            elevation: 16,
+                            onChanged: (String newValue){
+                              setState(() {
+                                dropdownJenis = newValue;
+                                if(dropdownJenis=='Pengeluaran'){
+                                  viewVisible = true;
+                                }else if(dropdownJenis=='Pemasukan'){
+                                  viewVisible = false;
+                                }
+                              });
+                            },
+                            items: <String>['Pemasukan','Pengeluaran']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            })
+                                .toList(),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Visibility(
+                            maintainSize: true,
+                            maintainAnimation: true,
+                            maintainState: true,
+                            visible: viewVisible,
+                            child: DropdownButton(
+                              value: dropdownKategori,
+                              icon: Icon(Icons.keyboard_arrow_down),
+                              iconSize: 24,
+                              elevation: 16,
+                              onChanged: (String newValue){
+                                setState(() {
+                                  dropdownKategori = newValue;
+                                });
+                              },
+                              items: <String>['Makanan','Hiburan','Belanja']
+                                  .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              })
+                                  .toList(),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Padding (
@@ -144,7 +206,7 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                         controller: deskController,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                          labelText: 'Deskripsi Pengeluaran',
+                          labelText: 'Deskripsi',
                           icon: Icon(Icons.mode_edit),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
@@ -190,20 +252,18 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                               child: MaterialButton(
                                 onPressed: () {
                                   if(formKey.currentState.validate()){
-                                    formKey.currentState.save();
-                                    if (pengeluaranState == null) {
-                                      pengeluaranState = History.withMontYear('${widget.jenis}',
-                                          int.parse(jumlahController.text),
-                                          DateFormat('dd MMMM yyyy').format(dateTime).toString(),
-                                          deskController.text, '-',
-                                          DateFormat('MM yyyy').format(dateTime).toString()
-                                      );
-                                    } else {
-                                      pengeluaranState.deskripsi = deskController.text;
-                                      pengeluaranState.jumlah = int.parse(jumlahController.text);
-                                      pengeluaranState.date = DateFormat('dd MMMM yyyy').format(dateTime).toString();
-                                    }
-                                    this.isLimited(pengeluaranState);
+                                      formKey.currentState.save();
+                                      editState.deskripsi = deskController.text;
+                                      editState.jumlah = int.parse(jumlahController.text);
+                                      editState.date = Formatter;
+                                      editState.kategori = dropdownJenis == 'Pemasukan'? dropdownJenis : dropdownKategori;
+                                      editState.tag = dropdownJenis == 'Pemasukan'? '+' : '-';
+                                      editState.bulanTahun = DateFormat('MM yyyy').format(dateTime).toString();
+                                      if(dropdownJenis == 'Pemasukan'){
+                                        Navigator.pop(context,editState);
+                                      }else{
+                                        this.isLimited(editState);
+                                      }
                                   }
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),

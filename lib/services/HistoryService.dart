@@ -1,5 +1,4 @@
 import 'package:money_management/models/History.dart';
-import 'package:money_management/models/Kategori.dart';
 import 'package:money_management/services/DBlite.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -11,7 +10,7 @@ class HistoryCon extends DBLite {
 
   //bisa menggunakan db.raw : untuk butuh parameter query tertentu atau db.(EXEKUSINYA) untuk memasukkan semua record tanpa parameter4
 
-  Future<int> insertHistory(Kategori his) async {
+  Future<int> insertHistory(History his) async {
     Database db = await this.initDb();
     final sql = '''INSERT INTO ${DBLite.HISTORY_TABLE}
     (
@@ -19,27 +18,28 @@ class HistoryCon extends DBLite {
       ${DBLite.JUMLAH},
       ${DBLite.DATE},
       ${DBLite.DESKRIPSI},
-      ${DBLite.TAG}
+      ${DBLite.TAG},
+      ${DBLite.MONTHYEAR}
     )
     VALUES (?,?,?,?,?)''';
-    List<dynamic> params = [his.kategori, his.jumlah, his.tanggal, his.deskripsi, his.tag];
+    List<dynamic> params = [his.kategori, his.jumlah, his.date, his.deskripsi, his.tag, his.bulanTahun];
     final result = await db.rawInsert(sql, params);
     await db.close();
     return result;
   }
 
-  Future<int> updateHistory(Kategori his) async {
+  Future<int> updateHistory(History his) async {
     Database db = await this.initDb();
     final sql = '''UPDATE ${DBLite.HISTORY_TABLE}
-    SET ${DBLite.DESKRIPSI} = ?, ${DBLite.JUMLAH} = ?, ${DBLite.DATE} = ?
+    SET ${DBLite.DESKRIPSI} = ?, ${DBLite.JUMLAH} = ?, ${DBLite.KATEGORI} = ?, ${DBLite.TAG} = ?, ${DBLite.DATE} = ?, ${DBLite.MONTHYEAR} = ?
     WHERE ${DBLite.ID} = ?
     ''';
-    List<dynamic> params = [his.deskripsi, his.jumlah, his.tanggal,his.id];
+    List<dynamic> params = [his.deskripsi, his.jumlah, his.kategori, his.tag, his.date, his.bulanTahun, his.id];
     final result = await db.rawUpdate(sql, params);
     return result;
   }
 
-  Future<int> deleteHistory(Kategori his) async {
+  Future<int> deleteHistory(History his) async {
     Database db = await this.initDb();
     final sql = '''DELETE FROM ${DBLite.HISTORY_TABLE}
     WHERE ${DBLite.ID} = ?

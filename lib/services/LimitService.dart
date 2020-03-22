@@ -1,5 +1,5 @@
 import 'package:money_management/models/Limit.dart';
-import 'package:money_management/models/Kategori.dart';
+import 'package:money_management/models/History.dart';
 import 'package:money_management/services/DBlite.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -47,10 +47,10 @@ class LimitCon extends DBLite {
     return result;
   }
 
-  Future<List> checkLimit(Kategori k) async{
+  Future<List> checkLimit(History k) async{
     Database db = await this.initDb();
-    var result = await db.rawQuery("SELECT jumlah FROM limit WHERE jenis='${k.kategori}'");
-    await db.close();
+    final sql = "SELECT jumlah FROM batas WHERE kategori = '${k.kategori}'";
+    var result = await db.rawQuery(sql);
     return result;
   }
 

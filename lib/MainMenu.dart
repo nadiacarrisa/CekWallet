@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:money_management/HistoryPage.dart';
+import 'EditForm.dart';
 import 'ExpenseForm.dart';
 import 'IncomeForm.dart';
 import 'dart:async';
-import 'models/Kategori.dart';
 import 'models/History.dart';
 import 'services/DBlite.dart';
 import 'services/HistoryService.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 
 class MainMenu extends StatefulWidget {
+
   @override
-  _MainMenuState createState() => _MainMenuState();
+  MainMenuState createState() => MainMenuState();
 }
 
-class _MainMenuState extends State<MainMenu> {
+class MainMenuState extends State<MainMenu> {
   int _total = 0;
   int masuk, keluar;
   List totalList;
@@ -21,6 +23,8 @@ class _MainMenuState extends State<MainMenu> {
   DBLite dbHelper = new DBLite();
   HistoryCon dbHistory = new HistoryCon();
   HistoryCards historyCardList = new HistoryCards();
+
+
 
   void calTot() async {
     totalList = await dbHelper.calculateTotalPemasukan();
@@ -57,12 +61,10 @@ class _MainMenuState extends State<MainMenu> {
     String tag;
     cList.forEach(
       (history) {
-        if (history['tag'] == '0') {
+        if (history['tag'] == '+') {
           col = Color.fromRGBO(61, 153, 75, 0.8);
-          tag = '+';
         } else {
           col = Color.fromRGBO(237, 85, 85, 0.8);
-          tag = '-';
         }
 
         if (tgl != history['date']) {
@@ -81,12 +83,14 @@ class _MainMenuState extends State<MainMenu> {
         }
 
         HistoryCards hc = new HistoryCards(
+          id: history['id'],
           title: history['deskripsi'],
           value: history['jumlah'],
           time: history['date'],
           cPrice: col,
-          tag: tag,
+          tag: history['tag'],
           tagLabel: history['kategori'],
+          klikUpdate: ()=>{RouteEditForm(History(id: history['id'], kategori: history['kategori'], deskripsi: history['deskripsi'], date: history['date'],jumlah: history['jumlah'], tag: history['tag']))}
         );
         _cardList.add(hc.cards());
       },
@@ -101,26 +105,39 @@ class _MainMenuState extends State<MainMenu> {
     super.initState();
   }
 
-  Future<Kategori> navigateToIncomeForm(
-      BuildContext context, Kategori kat) async {
+  Future<History> navigateToIncomeForm(
+      BuildContext context, History kat) async {
+      var result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return IncomeForm(kat);
+          },
+        ),
+      );
+    return result;
+  }
+
+  Future<History> navigateToExpenseForm(
+      BuildContext context, History kat, String jenis) async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return IncomeForm(kat);
+          return ExpenseForm(jenis, kat);
         },
       ),
     );
     return result;
   }
 
-  Future<Kategori> navigateToExpenseForm(
-      BuildContext context, Kategori kat, String jenis) async {
+  Future<History> navigateToEditForm(
+      BuildContext context, History kat) async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return ExpenseForm(jenis, kat);
+          return EditForm(kat);
         },
       ),
     );
@@ -220,16 +237,12 @@ class _MainMenuState extends State<MainMenu> {
                             var kategori =
                                 await navigateToIncomeForm(context, null);
                             if (kategori != null) {
-                              int result = await dbHistory
+                              await dbHistory
                                   .insertHistory(kategori)
                                   .then((total) {
                                 calTot();
                                 getList();
                               });
-//                              NANTI...@HANDI
-//                                if (result > 0) {
-//                                  updateListView();
-//                               }
                             }
                           },
                           padding: EdgeInsets.symmetric(
@@ -445,12 +458,23 @@ class _MainMenuState extends State<MainMenu> {
   void RouteExpenseForm(String jenis) async {
     var kategori = await navigateToExpenseForm(context, null, jenis);
     if (kategori != null) {
-      int result = await dbHistory.insertHistory(kategori).then((total) {
+      await dbHistory.insertHistory(kategori).then((total) {
         calTot();
         getList();
       });
     }
   }
+
+  void RouteEditForm(History edit) async{
+    var kategori = await navigateToEditForm(context, edit);
+    if (kategori != null) {
+      await dbHistory.updateHistory(kategori).then((total) {
+        calTot();
+        getList();
+      });
+    }
+  }
+
 }
 
 class CustomShapeClipper extends CustomClipper<Path> {
@@ -469,21 +493,22 @@ class CustomShapeClipper extends CustomClipper<Path> {
 }
 
 class HistoryCards {
+  int id;
   String title;
   int value;
   String time;
   Color cPrice;
   String tagLabel;
   String tag;
+  VoidCallback klikUpdate;
 
   HistoryCards(
-      {this.title,
+      {this.id,this.title,
       this.value,
       this.time,
       this.cPrice,
       this.tag,
-      this.tagLabel});
-
+      this.tagLabel, this.klikUpdate});
   Widget cards() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
@@ -553,7 +578,7 @@ class HistoryCards {
               fontWeight: FontWeight.bold,
             ),
           ),
-//        onTap: (){Navigator.pushNamed(context, '/ubahlimit');},
+          onTap: klikUpdate,
         ),
       ),
     );

@@ -3,7 +3,7 @@ import 'package:sqflite/sqlite_api.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import '../models/Kategori.dart';
+import '../models/History.dart';
 
 class DBLite{
   static DBLite _dbHelper;
@@ -16,6 +16,7 @@ class DBLite{
   static const DATE = 'date';
   static const DESKRIPSI = 'deskripsi';
   static const TAG = 'tag';
+  static const MONTHYEAR = 'monthYear';
 
   static const LIMIT_TABLE = 'limit';
   static const ID_LIMIT = 'id';
@@ -46,10 +47,11 @@ class DBLite{
   }
 
   void _createDb(Database db, int version) async {
-    await db.execute(
-    'CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT, monthYear TEXT);'
-    'CREATE TABLE limit ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER DEFAULT 0);'
-    'CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
+    Batch batch = db.batch();
+    batch.execute('CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT, monthYear TEXT);');
+    batch.execute('CREATE TABLE batas ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER DEFAULT 0);');
+    batch.execute('CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
+    List<dynamic> res = await batch.commit();
   }
 
   Future<Database> get database async {
@@ -62,7 +64,7 @@ class DBLite{
   Future<List> calculateTotalPemasukan() async{
     Database db = await this.initDb();
 
-    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE tag='0'");
+    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE tag='+'");
 //    print(result.toList());
 //    db.close();
     await db.close();
@@ -71,10 +73,16 @@ class DBLite{
 
   Future<List> calculateTotalPengeluaran() async{
     Database db = await this.initDb();
-    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE tag='1'");
+    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE tag='-'");
 //    print(result.toList());
     await db.close();
     return result.toList();
   }
 
+  Future<List> checkExpense(History k) async{
+    Database db = await this.initDb();
+    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE monthYear='${k.bulanTahun}'");
+    await db.close();
+    return result;
+  }
 }

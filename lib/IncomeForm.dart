@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter/src/material/date_picker.dart';
+import 'package:money_management/models/History.dart';
 import 'Validator.dart';
-import 'models/Kategori.dart';
+import 'models/History.dart';
 import 'package:intl/intl.dart';
 
 class IncomeForm extends StatefulWidget {
-  final Kategori pemasukan;
+  final History pemasukan;
   IncomeForm(this.pemasukan);
 
   @override
@@ -14,11 +15,11 @@ class IncomeForm extends StatefulWidget {
 }
 
 class _IncomeFormState extends State<IncomeForm> with Validation{
-  Kategori pemasukanState;
+  History pemasukanState;
   _IncomeFormState(this.pemasukanState);
 
   TextEditingController deskController = TextEditingController();
-  TextEditingController jumlahController = MoneyMaskedTextController(initialValue: 0,thousandSeparator: '', precision: 0,decimalSeparator: '');
+  TextEditingController jumlahController = MoneyMaskedTextController(initialValue: 0,thousandSeparator: '',precision: 0, decimalSeparator: '');
 
   final formKey = GlobalKey<FormState>();
   String jumlah = '';
@@ -30,7 +31,7 @@ class _IncomeFormState extends State<IncomeForm> with Validation{
     if (pemasukanState != null) {
       deskController.text = pemasukanState.deskripsi;
       jumlahController.text = pemasukanState.jumlah.toString();
-      dateTime =  DateTime.parse(pemasukanState.tanggal);
+      dateTime =  DateTime.parse(pemasukanState.date);
     }
 
     return Scaffold(
@@ -57,9 +58,11 @@ class _IncomeFormState extends State<IncomeForm> with Validation{
                     ),
                     onTap: (){
                       showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2019), lastDate: DateTime(2021)).then((date){
-                        setState(() {
-                          dateTime = date;
-                        });
+                        if(date!=null){
+                          setState(() {
+                            dateTime = date;
+                          });
+                        }
                       });
                     },
                   ),
@@ -111,7 +114,7 @@ class _IncomeFormState extends State<IncomeForm> with Validation{
                           ),
                           validator: validateValue,
                           onSaved: (String value) { //KETIKA LOLOS VALIDASI
-                              print(value);
+                            jumlah = value;
                           },
                         ),
                       ),
@@ -132,11 +135,16 @@ class _IncomeFormState extends State<IncomeForm> with Validation{
                                     if(formKey.currentState.validate()){
                                       formKey.currentState.save();
                                       if (pemasukanState == null) {
-                                        pemasukanState = Kategori('Pemasukan', int.parse(jumlahController.text), DateFormat('dd MMMM yyyy').format(dateTime).toString(), deskController.text, '0');
+                                        pemasukanState = History.withMontYear('Pemasukan',
+                                            int.parse(jumlahController.text.toString()),
+                                            DateFormat('dd MMMM yyyy').format(dateTime).toString(),
+                                            deskController.text, '+',
+                                            DateFormat('MM yyyy').format(dateTime).toString()
+                                        );
                                       } else {
                                         pemasukanState.deskripsi = deskController.text;
                                         pemasukanState.jumlah = int.parse(jumlahController.text);
-                                        pemasukanState.tanggal = DateFormat("dd MMMMM yyyy").format(dateTime).toString();
+                                        pemasukanState.date = DateFormat("dd MMMMM yyyy").format(dateTime).toString();
                                       }
                                       Navigator.pop(context, pemasukanState);
                                     }
