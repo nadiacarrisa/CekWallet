@@ -21,7 +21,7 @@ class HistoryCon extends DBLite {
       ${DBLite.TAG},
       ${DBLite.MONTHYEAR}
     )
-    VALUES (?,?,?,?,?)''';
+    VALUES (?,?,?,?,?,?)''';
     List<dynamic> params = [his.kategori, his.jumlah, his.date, his.deskripsi, his.tag, his.bulanTahun];
     final result = await db.rawInsert(sql, params);
     await db.close();
