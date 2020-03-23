@@ -6,8 +6,11 @@ class History {
   String date;
   String deskripsi;
   String tag;
+  String bulanTahun;
 
   History({this.id, this.kategori, this.jumlah, this.date, this.deskripsi, this.tag});
+  History.withMontYear(this.kategori, this.jumlah, this.date, this.deskripsi, this.tag, this.bulanTahun);
+  History.withoutID(this.kategori, this.jumlah, this.date, this.deskripsi, this.tag);
 
   History.fromMap(Map<String, dynamic> historyMaps) {
     this.id = historyMaps['id'];
