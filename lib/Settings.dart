@@ -26,7 +26,7 @@ class Settings extends StatelessWidget{
                     leading: Icon(Icons.lock),
                     title: Text("Ubah PIN"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: (){},
+                    onTap: (){Navigator.pushNamed(context, '/ubahpin');},
                   ),
                 ),
                 Card(

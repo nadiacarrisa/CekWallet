@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_management/services/PinService.dart';
 
 class Pin extends StatefulWidget{
   @override
@@ -23,6 +24,25 @@ class OtpScreen extends StatefulWidget{
   _OtpScreen createState() => _OtpScreen();
 }
 class _OtpScreen extends State<OtpScreen>{
+  PinCon dbPin = new PinCon();
+  String datapin;
+
+  void getPin() async{
+    List get = new List();
+    get = await dbPin.lihatPin();
+    get.forEach(
+            (pin){
+          datapin=pin['pin'];
+        }
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getPin();
+  }
+
   List<String> currentPin = ["","","",""];
   TextEditingController pinOneController = TextEditingController();
   TextEditingController pinTwoController = TextEditingController();
@@ -224,8 +244,9 @@ class _OtpScreen extends State<OtpScreen>{
       strPin+=e;
     });
     if(pinIndex==4){ //validasi
-      if(strPin=="1234"){
+      if(strPin==datapin){
         print(strPin);
+        print(datapin);
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/main',
           ModalRoute.withName('/pin'),
