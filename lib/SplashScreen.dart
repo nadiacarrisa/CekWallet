@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreenPage>{
   }
 
   void navigationPage() {
-    Navigator.of(context).pushReplacementNamed('/main');
+    Navigator.of(context).pushReplacementNamed('/pin');
   }
 
   @override
