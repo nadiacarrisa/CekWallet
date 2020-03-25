@@ -23,6 +23,10 @@ class DBLite{
   static const KATEGORI_LIMIT = 'kategori';
   static const JUMLAH_LIMIT = 'jumlah';
 
+  static const PIN_TABLE = 'pincode';
+  static const ID_PIN = 'id';
+  static const PIN = 'pin';
+
   DBLite._createObject();
 
   //default constructor, karena ada constructor kedua yaitu factory DBLite()
@@ -51,6 +55,8 @@ class DBLite{
     batch.execute('CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT, monthYear TEXT);');
     batch.execute('CREATE TABLE batas ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER DEFAULT 0);');
     batch.execute('CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
+    batch.execute('CREATE TABLE pincode(id INTEGER PRIMARY KEY AUTOINCREMENT, pin TEXT);');
+    batch.execute('INSERT INTO pincode(pin) VALUES("1234");');
     List<dynamic> res = await batch.commit();
   }
 

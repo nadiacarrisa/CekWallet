@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:money_management/Settings.dart';
+import 'PinPage.dart';
 import 'UbahLimit.dart';
 import 'package:money_management/SplashScreen.dart';
 import 'MainMenu.dart';
 import 'HistoryPage.dart';
+import 'UbahPin.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,6 +27,9 @@ class MyApp extends StatelessWidget {
         '/history': (context) => HistoryPage(),
         '/': (context) => SplashScreenPage(),
         '/main': (context) => MainMenu(),
+        '/pin': (context) => Pin(),
+        '/ubahpin': (context) => UbahPin(),
+
       },
     );
   }
