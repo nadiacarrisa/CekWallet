@@ -247,17 +247,11 @@ class _OtpScreen extends State<OtpScreen>{
       if(strPin==datapin){
         print(strPin);
         print(datapin);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/main',
-          ModalRoute.withName('/pin'),
-        );
+        Navigator.of(context).pushNamedAndRemoveUntil('/main', ModalRoute.withName('/'));
       }
       else{
         print(strPin);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/pin',
-          ModalRoute.withName('/pin'),
-        );
+        Navigator.of(context).pushNamed('/pin');
       }
     }
   }
@@ -266,7 +260,7 @@ class _OtpScreen extends State<OtpScreen>{
   setPin(int n, String text){
     switch(n){
       case 1:
-        pinOneController.text=text;
+        pinOneController.text="*";
         break;
       case 2:
         pinTwoController.text=text;
