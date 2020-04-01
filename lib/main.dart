@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:money_management/Settings.dart';
 import 'PinPage.dart';
+import 'SetPin.dart';
 import 'UbahLimit.dart';
 import 'package:money_management/SplashScreen.dart';
 import 'MainMenu.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/main': (context) => MainMenu(),
         '/pin': (context) => Pin(),
         '/ubahpin': (context) => UbahPin(),
+        '/setpin': (context) => SetPin(),
 
       },
     );

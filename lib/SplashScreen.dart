@@ -1,9 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:money_management/services/PinService.dart';
 import 'dart:async';
-import 'MainMenu.dart';
-import 'main.dart';
-import 'main.dart';
 
 class SplashScreenPage extends StatefulWidget{
 
@@ -24,8 +24,23 @@ class _SplashScreenState extends State<SplashScreenPage>{
     return Timer(duration, navigationPage);
   }
 
-  void navigationPage() {
-    Navigator.of(context).pushReplacementNamed('/pin');
+  Future<void> navigationPage() async {
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    PinCon dbPin = new PinCon();
+    String datapin,datapintamp;
+    List get = new List();
+    get = await dbPin.lihatPin();
+    get.forEach(
+            (pin){
+          datapintamp=pin['pin'];
+          print(datapintamp);
+        }
+    );
+    if(datapintamp==null){
+      Navigator.of(context).pushReplacementNamed('/setpin');
+    }
+    else
+      Navigator.of(context).pushReplacementNamed('/pin');
   }
 
   @override
@@ -37,6 +52,4 @@ class _SplashScreenState extends State<SplashScreenPage>{
       ),
     );
   }
-
-
 }

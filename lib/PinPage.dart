@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:money_management/services/PinService.dart';
-
+Codec<String, String> stringToBase64 = utf8.fuse(base64);
 class Pin extends StatefulWidget{
   @override
   _Pin createState() => _Pin();
@@ -25,14 +27,15 @@ class OtpScreen extends StatefulWidget{
 }
 class _OtpScreen extends State<OtpScreen>{
   PinCon dbPin = new PinCon();
-  String datapin;
+  String datapin,datapintamp;
 
   void getPin() async{
     List get = new List();
     get = await dbPin.lihatPin();
     get.forEach(
             (pin){
-          datapin=pin['pin'];
+              datapintamp=pin['pin'];
+              datapin =stringToBase64.decode(datapintamp);
         }
     );
   }
