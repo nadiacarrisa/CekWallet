@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 
+import 'models/Limit.dart';
+import 'services/LimitService.dart';
+
 enum Kategori {makanan, hiburan, belanja}
 
 
@@ -13,8 +16,9 @@ class UbahLimit extends StatefulWidget{
   }
 }
 class _ubah extends State<UbahLimit>{
+  TextEditingController jumlahlimit = MoneyMaskedTextController(initialValue: 0,thousandSeparator: '', precision: 0,decimalSeparator: '');
   Kategori _kat = Kategori.makanan;
-  String dropdownValue = 'makanan';
+  String dropdownValue = 'Makanan';
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -49,7 +53,7 @@ class _ubah extends State<UbahLimit>{
                           dropdownValue = newValue;
                         });
                       },
-                      items: <String>['makanan','hiburan','belanja']
+                      items: <String>['Makanan','Hiburan','Belanja']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -66,7 +70,8 @@ class _ubah extends State<UbahLimit>{
                     hintText: '100000',
 
                   ),
-                  controller: MoneyMaskedTextController(leftSymbol:'Rp. ',thousandSeparator: ',', decimalSeparator: '', precision: 0),
+//                  controller: MoneyMaskedTextController(leftSymbol:'Rp. ',thousandSeparator: ',', decimalSeparator: '', precision: 0),
+                  controller: jumlahlimit,
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
                     WhitelistingTextInputFormatter.digitsOnly,],
@@ -74,7 +79,13 @@ class _ubah extends State<UbahLimit>{
                 Padding(
                   padding: EdgeInsets.only(top: 50.0),
                   child: RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      int jumlah = int.parse(jumlahlimit.text);
+                      Limit l = new Limit(kategori: dropdownValue, jumlah: jumlah);
+                      LimitCon dbhelp = new LimitCon();
+                      dbhelp.updateLimit(l);
+                      showAlertDialog_Berhasil(context, l);
+                    },
                     child: const Text(
                       'Ubah',
                       style: TextStyle(fontSize: 16, color: Color.fromRGBO(255, 255, 255, 1)),
@@ -117,6 +128,26 @@ class _ubah extends State<UbahLimit>{
             ),
           )
         )
+    );
+  }
+  showAlertDialog_Berhasil(BuildContext context, Limit l) {
+    String kat = l.kategori; int jum = l.jumlah;
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () { Navigator.of(context).pushNamedAndRemoveUntil('/main', ModalRoute.withName('/')); },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Limit Berhasil Diubah", style: TextStyle(color: Colors.green),),
+      content: Text("Limit anda telah berhasil diubah!\nJangan boros-boros ya jangan melebihi Rp."+jum.toString()+" di kategori "+kat),
+      actions: [
+        okButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

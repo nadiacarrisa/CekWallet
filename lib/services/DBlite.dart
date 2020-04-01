@@ -18,7 +18,7 @@ class DBLite{
   static const TAG = 'tag';
   static const MONTHYEAR = 'monthYear';
 
-  static const LIMIT_TABLE = 'limit';
+  static const LIMIT_TABLE = 'batas';
   static const ID_LIMIT = 'id';
   static const KATEGORI_LIMIT = 'kategori';
   static const JUMLAH_LIMIT = 'jumlah';
@@ -53,10 +53,13 @@ class DBLite{
   void _createDb(Database db, int version) async {
     Batch batch = db.batch();
     batch.execute('CREATE TABLE history ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER, date TEXT, deskripsi TEXT, tag TEXT, monthYear TEXT);');
-    batch.execute('CREATE TABLE batas ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER DEFAULT 0);');
+    batch.execute('CREATE TABLE batas ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER);');
     batch.execute('CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
     batch.execute('CREATE TABLE pincode(id INTEGER PRIMARY KEY AUTOINCREMENT, pin TEXT);');
     batch.execute('INSERT INTO pincode(pin) VALUES(null);');
+    batch.execute('INSERT INTO batas(id,kategori,jumlah) VALUES(1,"Makanan",0);');
+    batch.execute('INSERT INTO batas(id,kategori,jumlah) VALUES(2,"Belanja",0);');
+    batch.execute('INSERT INTO batas(id,kategori,jumlah) VALUES(3,"Hiburan",0);');
     List<dynamic> res = await batch.commit();
   }
 
@@ -87,7 +90,7 @@ class DBLite{
 
   Future<List> checkExpense(History k) async{
     Database db = await this.initDb();
-    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE monthYear='${k.bulanTahun}'");
+    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE monthYear='${k.bulanTahun}' AND kategori='${k.kategori}'");
     await db.close();
     return result;
   }

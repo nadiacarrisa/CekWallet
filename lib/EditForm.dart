@@ -43,6 +43,8 @@ class _EditFormState extends State<EditForm> with Validation{
     total.forEach(
           (jmlLimit) {
             expense = jmlLimit['Total'];
+            if(expense==null)
+              expense=0;
           },
     );
     String formatter = DateFormat("MM yyyy").format(DateTime.now()).toString();
@@ -66,6 +68,9 @@ class _EditFormState extends State<EditForm> with Validation{
             );
           },
         );
+      }
+      else{
+        Navigator.pop(context,k);
       }
     }
     else{
