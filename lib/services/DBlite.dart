@@ -56,7 +56,7 @@ class DBLite{
     batch.execute('CREATE TABLE batas ( id INTEGER PRIMARY KEY AUTOINCREMENT, kategori TEXT, jumlah INTEGER DEFAULT 0);');
     batch.execute('CREATE TABLE saldo ( id INTEGER PRIMARY KEY AUTOINCREMENT, jumlah INTEGER);');
     batch.execute('CREATE TABLE pincode(id INTEGER PRIMARY KEY AUTOINCREMENT, pin TEXT);');
-    batch.execute('INSERT INTO pincode(pin) VALUES("1234");');
+    batch.execute('INSERT INTO pincode(pin) VALUES(null);');
     List<dynamic> res = await batch.commit();
   }
 

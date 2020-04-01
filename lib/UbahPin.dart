@@ -1,8 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:money_management/services/PinService.dart';
-
 import 'models/Pin.dart';
-
+Codec<String, String> stringToBase64 = utf8.fuse(base64);
 class UbahPin extends StatefulWidget{
   @override
   _ubahPin createState(){
@@ -15,11 +16,13 @@ class _ubahPin extends State<UbahPin>{
   TextEditingController pinController = TextEditingController();
 
   void getPin() async{
+    String datapintamp;
     List get = new List();
     get = await dbPin.lihatPin();
     get.forEach(
         (pin){
-          datapin=pin['pin'];
+          datapintamp=pin['pin'];
+          datapin =stringToBase64.decode(datapintamp);
         }
     );
   }
@@ -75,7 +78,8 @@ class _ubahPin extends State<UbahPin>{
               child: MaterialButton(
                 onPressed: (){
                   if(pinController.text.length==4){
-                    Pin p = new Pin(pin: pinController.text);
+                    String tamp = stringToBase64.encode(pinController.text);
+                    Pin p = new Pin(pin: tamp);
                     PinCon dbPin = new PinCon();
                     dbPin.update(p);
                     print(pinController.text);
@@ -139,3 +143,4 @@ class _ubahPin extends State<UbahPin>{
     );
   }
 }
+
