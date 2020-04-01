@@ -34,10 +34,12 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
 
   void isLimited(History k) async{
     var jml,expense;
+    print(k.kategori);
     limit = await LimitCon().checkLimit(k);
     limit.forEach(
           (jmlLimit) {
             jml = jmlLimit['jumlah'];
+            print(jml);
           },
     );
     total = await LimitCon().checkExpense(k);
