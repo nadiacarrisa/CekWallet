@@ -46,6 +46,9 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
     total.forEach(
           (jmlLimit) {
             expense = jmlLimit['Total'];
+            if(expense==null)
+              expense=0;
+            print(expense);
           },
     );
     String formatter = DateFormat("MM yyyy").format(DateTime.now()).toString();
@@ -69,6 +72,9 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
             );
           },
         );
+      }
+      else{
+        Navigator.pop(context,k);
       }
     }
     else{

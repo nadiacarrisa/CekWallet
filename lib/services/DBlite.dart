@@ -90,7 +90,7 @@ class DBLite{
 
   Future<List> checkExpense(History k) async{
     Database db = await this.initDb();
-    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE monthYear='${k.bulanTahun}'");
+    var result = await db.rawQuery("SELECT SUM(jumlah) as Total FROM history WHERE monthYear='${k.bulanTahun}' AND kategori='${k.kategori}'");
     await db.close();
     return result;
   }
