@@ -263,7 +263,7 @@ class _OtpScreen extends State<OtpScreen>{
   setPin(int n, String text){
     switch(n){
       case 1:
-        pinOneController.text="*";
+        pinOneController.text=text;
         break;
       case 2:
         pinTwoController.text=text;
