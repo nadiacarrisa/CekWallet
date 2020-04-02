@@ -61,9 +61,16 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
               shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
               actions: [
                 FlatButton(
-                  child: Text("OK"),
+                  child: Text("Batal", style: TextStyle(color: Colors.red),),
                   onPressed: () {
-                         Navigator.pop(context);
+                     Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Lanjut"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context,k);
                   },
                 ),
               ],
@@ -74,9 +81,6 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
       else{
         Navigator.pop(context,k);
       }
-    }
-    else{
-      Navigator.pop(context,k);
     }
   }
 
