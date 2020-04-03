@@ -27,19 +27,40 @@ class _EditFormState extends State<EditForm> with Validation{
   List limit,total;
   String jumlah = '';
   DateTime dateTime = DateTime.now();
-  String Formatter;
+  String Formatter, FormatterMonthYear, monthYear;
+  int Jmllimit, JmlExpense;
   bool viewVisible = false;
 
+  void KeteranganExpense(String kategori, String tgl) async{
+    limit = await LimitCon().checkLimit(kategori);
+    limit.forEach(
+          (jmlLimit) {
+        setState(() {
+          Jmllimit = jmlLimit['jumlah'];
+        });
+      },
+    );
+    total = await LimitCon().checkExpense(kategori, tgl);
+    total.forEach(
+          (jmlLimit) {
+        setState(() {
+          JmlExpense = jmlLimit['Total'];
+          if(JmlExpense==null) JmlExpense=0;
+          monthYear = tgl;
+        });
+      },
+    );
+  }
 
   void isLimited(History k) async{
     var jml,expense;
-    limit = await LimitCon().checkLimit(k);
+    limit = await LimitCon().checkLimit(k.kategori);
     limit.forEach(
           (jmlLimit) {
             jml = jmlLimit['jumlah'];
           },
     );
-    total = await LimitCon().checkExpense(k);
+    total = await LimitCon().checkExpense(k.kategori, k.bulanTahun);
     total.forEach(
           (jmlLimit) {
             expense = jmlLimit['Total'];
@@ -47,8 +68,6 @@ class _EditFormState extends State<EditForm> with Validation{
               expense=0;
           },
     );
-    String formatter = DateFormat("MM yyyy").format(DateTime.now()).toString();
-    if(jml!=null && formatter == k.bulanTahun){
       if(k.jumlah + expense > 0.75 * jml){
         showDialog(
           context: context,
@@ -79,15 +98,16 @@ class _EditFormState extends State<EditForm> with Validation{
       else{
         Navigator.pop(context,k);
       }
-    }
   }
 
   @override
   void initState() {
     // TODO: implement initState
+    KeteranganExpense(editState.kategori, editState.bulanTahun);
     deskController.text = editState.deskripsi;
     jumlahController.text = editState.jumlah.toString();
     Formatter= editState.date;
+    FormatterMonthYear = editState.bulanTahun;
     if(editState.kategori == 'Pemasukan'){
       dropdownJenis = editState.kategori;
     }else{
@@ -100,9 +120,6 @@ class _EditFormState extends State<EditForm> with Validation{
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit'),
@@ -126,11 +143,12 @@ class _EditFormState extends State<EditForm> with Validation{
                       style: TextStyle(fontSize: 25,)
                   ),
                   onTap: (){
-                    showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2019), lastDate: DateTime(2021)).then((date){
+                    showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2000), lastDate: DateTime.now()).then((date){
                       if(date!=null){
                         setState(() {
                           Formatter = DateFormat('dd MMMM yyyy').format(date).toString();
-                          dateTime = date;
+                          FormatterMonthYear = DateFormat('MMMM yyyy').format(date);
+                          KeteranganExpense(dropdownKategori, DateFormat('MMMM yyyy').format(date));
                         });
                       }
                     });
@@ -182,7 +200,7 @@ class _EditFormState extends State<EditForm> with Validation{
                             width: 20,
                           ),
                           Visibility(
-                            maintainSize: true,
+                            maintainSize: false,
                             maintainAnimation: true,
                             maintainState: true,
                             visible: viewVisible,
@@ -194,6 +212,8 @@ class _EditFormState extends State<EditForm> with Validation{
                               onChanged: (String newValue){
                                 setState(() {
                                   dropdownKategori = newValue;
+                                  KeteranganExpense(dropdownKategori, editState.bulanTahun);
+                                  print(editState.bulanTahun);
                                 });
                               },
                               items: <String>['Makanan','Hiburan','Belanja']
@@ -205,6 +225,25 @@ class _EditFormState extends State<EditForm> with Validation{
                               })
                                   .toList(),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(),
+                    Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: viewVisible,
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                              title: Text('Limit : Rp $Jmllimit',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              subtitle: Text('Pengeluaran Bulan $monthYear : Rp $JmlExpense',
+                                style: TextStyle(fontSize: 15),
+                              ),
                           ),
                         ],
                       ),
@@ -229,7 +268,7 @@ class _EditFormState extends State<EditForm> with Validation{
                     ),
 
                     Padding (
-                      padding: EdgeInsets.only(top:10.0, bottom:15.0),
+                      padding: EdgeInsets.only(top:10.0),
                       child: TextFormField(
                         controller: jumlahController,
                         keyboardType: TextInputType.number,
@@ -246,7 +285,17 @@ class _EditFormState extends State<EditForm> with Validation{
                         },
                       ),
                     ),
-
+                    Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: viewVisible,
+                      child: ListTile(
+                          title: Text('AWAS, hemat!!! Pengeluaran harus 75% kurang dari limit!!!',
+                            style: TextStyle(fontSize: 13, color: Colors.red),
+                          ),
+                      ),
+                    ),
                     // tombol button
                     Padding (
                       padding: EdgeInsets.only(top:10.0, bottom:15.0),
@@ -267,7 +316,7 @@ class _EditFormState extends State<EditForm> with Validation{
                                       editState.date = Formatter;
                                       editState.kategori = dropdownJenis == 'Pemasukan'? dropdownJenis : dropdownKategori;
                                       editState.tag = dropdownJenis == 'Pemasukan'? '+' : '-';
-                                      editState.bulanTahun = DateFormat('MM yyyy').format(dateTime).toString();
+                                      editState.bulanTahun = FormatterMonthYear;
                                       if(dropdownJenis == 'Pemasukan'){
                                         Navigator.pop(context,editState);
                                       }else{

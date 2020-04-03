@@ -57,7 +57,7 @@ class _IncomeFormState extends State<IncomeForm> with Validation{
                         style: TextStyle(fontSize: 25,)
                     ),
                     onTap: (){
-                      showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2019), lastDate: DateTime(2021)).then((date){
+                      showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2000), lastDate: DateTime.now()).then((date){
                         if(date!=null){
                           setState(() {
                             dateTime = date;
@@ -139,7 +139,7 @@ class _IncomeFormState extends State<IncomeForm> with Validation{
                                             int.parse(jumlahController.text.toString()),
                                             DateFormat('dd MMMM yyyy').format(dateTime).toString(),
                                             deskController.text, '+',
-                                            DateFormat('MM yyyy').format(dateTime).toString()
+                                            DateFormat('MMMM yyyy').format(dateTime).toString()
                                         );
                                       } else {
                                         pemasukanState.deskripsi = deskController.text;

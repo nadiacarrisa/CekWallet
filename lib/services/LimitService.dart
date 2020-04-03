@@ -47,9 +47,9 @@ class LimitCon extends DBLite {
 //    return result;
 //  }
 
-  Future<List> checkLimit(History k) async{
+  Future<List> checkLimit(String kategori) async{
     Database db = await this.initDb();
-    final sql = "SELECT jumlah FROM batas WHERE kategori = '${k.kategori}'";
+    final sql = "SELECT jumlah FROM batas WHERE kategori = '$kategori'";
     var result = await db.rawQuery(sql);
     return result;
   }

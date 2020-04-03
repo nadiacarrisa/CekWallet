@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:money_management/services/HistoryService.dart';
 
 class HistoryPage extends StatefulWidget {

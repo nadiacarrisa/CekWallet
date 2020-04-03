@@ -20,7 +20,8 @@ class ExpenseForm extends StatefulWidget {
 class _ExpenseFormState extends State<ExpenseForm> with Validation{
   LimitCon limitDb = LimitCon();
   History pengeluaranState;
-  String jenisState;
+  String jenisState, monthYear;
+  int Jmllimit, JmlExpense;
   _ExpenseFormState(this.pengeluaranState, this.jenisState);
 
   TextEditingController deskController = TextEditingController();
@@ -31,57 +32,87 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
   String jumlah = '';
   DateTime dateTime = DateTime.now();
 
+  void KeteranganExpense(String kategori, DateTime tgl) async{
+    String formatter = DateFormat('MMMM yyyy').format(tgl);
+    limit = await LimitCon().checkLimit(kategori);
+    limit.forEach(
+          (jmlLimit) {
+        setState(() {
+          Jmllimit = jmlLimit['jumlah'];
+        });
+      },
+    );
+    total = await LimitCon().checkExpense(kategori, formatter);
+    total.forEach(
+          (jmlLimit) {
+            setState(() {
+              JmlExpense = jmlLimit['Total'];
+              if(JmlExpense==null) JmlExpense=0;
+            });
+      },
+    );
+    monthYear = formatter;
+  }
 
   void isLimited(History k) async{
     var jml,expense;
     print(k.kategori);
-    limit = await LimitCon().checkLimit(k);
+    limit = await LimitCon().checkLimit(k.kategori);
     limit.forEach(
           (jmlLimit) {
             jml = jmlLimit['jumlah'];
           },
     );
-    total = await LimitCon().checkExpense(k);
+    total = await LimitCon().checkExpense(k.kategori, k.bulanTahun);
     total.forEach(
           (jmlLimit) {
             expense = jmlLimit['Total'];
-            if(expense==null)
-              expense=0;
+            if(expense==null) expense=0;
           },
     );
-    String formatter = DateFormat("MM yyyy").format(DateTime.now()).toString();
-    if(jml!=null && formatter == k.bulanTahun){
-      if(k.jumlah + expense > 0.75 * jml){
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("AWAS"),
-              content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
-              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
-              actions: [
-                FlatButton(
-                  child: Text("Batal", style: TextStyle(color: Colors.red),),
-                  onPressed: () {
-                     Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: Text("Lanjut"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context,k);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-      else{
+
+      if(jml!=0){
+        if(k.jumlah + expense > 0.75 * jml){
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("AWAS"),
+                content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
+                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+                actions: [
+                  FlatButton(
+                    child: Text("Batal", style: TextStyle(color: Colors.red),),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Lanjut"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context,k);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        else{
+          Navigator.pop(context,k);
+        }
+      }else{
         Navigator.pop(context,k);
       }
-    }
+
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    KeteranganExpense(widget.jenis, dateTime);
   }
 
   @override
@@ -116,9 +147,10 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                       style: TextStyle(fontSize: 25,)
                   ),
                   onTap: (){
-                    showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2019), lastDate: DateTime(2021)).then((date){
+                    showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2000), lastDate: DateTime.now()).then((date){
                       if(date!=null){
                         setState(() {
+                          KeteranganExpense(widget.jenis, date);
                           dateTime = date;
                         });
                       }
@@ -141,9 +173,21 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: ListTile(
                         title: Text('${widget.jenis}',
+                          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Divider(),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                      child: ListTile(
+                        title: Text('Limit : Rp $Jmllimit',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        subtitle: Text('Pengeluaran Bulan $monthYear : Rp $JmlExpense',
                           style: TextStyle(fontSize: 15),
                         ),
                       ),
@@ -168,7 +212,7 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                     ),
 
                     Padding (
-                      padding: EdgeInsets.only(top:10.0, bottom:15.0),
+                      padding: EdgeInsets.only(top:10.0),
                       child: TextFormField(
                         controller: jumlahController,
                         keyboardType: TextInputType.number,
@@ -184,6 +228,11 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                           jumlah = value;
                         },
                       ),
+                    ),
+                    ListTile(
+                        title: Text('AWAS, hemat!!! Pengeluaran harus 75% kurang dari limit!!!',
+                          style: TextStyle(fontSize: 13, color: Colors.red),
+                        ),
                     ),
 
                     // tombol button
@@ -206,7 +255,7 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                                           int.parse(jumlahController.text),
                                           DateFormat('dd MMMM yyyy').format(dateTime).toString(),
                                           deskController.text, '-',
-                                          DateFormat('MM yyyy').format(dateTime).toString()
+                                          DateFormat('MMMM yyyy').format(dateTime).toString()
                                       );
                                     } else {
                                       pengeluaranState.deskripsi = deskController.text;

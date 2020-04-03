@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:money_management/HistoryPage.dart';
 import 'EditForm.dart';
 import 'ExpenseForm.dart';
 import 'IncomeForm.dart';
@@ -7,7 +6,6 @@ import 'dart:async';
 import 'models/History.dart';
 import 'services/DBlite.dart';
 import 'services/HistoryService.dart';
-import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 
 class MainMenu extends StatefulWidget {
 
@@ -89,8 +87,9 @@ class MainMenuState extends State<MainMenu> {
           time: history['date'],
           cPrice: col,
           tag: history['tag'],
+          monthYear: history['monthYear'],
           tagLabel: history['kategori'],
-          klikUpdate: ()=>{RouteEditForm(History(id: history['id'], kategori: history['kategori'], deskripsi: history['deskripsi'], date: history['date'],jumlah: history['jumlah'], tag: history['tag']))}
+          klikUpdate: ()=>{RouteEditForm(History(id: history['id'], kategori: history['kategori'], deskripsi: history['deskripsi'], date: history['date'],jumlah: history['jumlah'], tag: history['tag'], bulanTahun: history['monthYear']))}
         );
         _cardList.add(hc.cards());
       },
@@ -500,6 +499,7 @@ class HistoryCards {
   Color cPrice;
   String tagLabel;
   String tag;
+  String monthYear;
   VoidCallback klikUpdate;
 
   HistoryCards(
@@ -508,7 +508,8 @@ class HistoryCards {
       this.time,
       this.cPrice,
       this.tag,
-      this.tagLabel, this.klikUpdate});
+      this.tagLabel,
+      this.monthYear, this.klikUpdate});
   Widget cards() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
