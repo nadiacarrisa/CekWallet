@@ -1,14 +1,20 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+
 import 'models/Pin.dart';
 import 'package:flutter/material.dart';
 import 'package:money_management/services/PinService.dart';
+
 Codec<String, String> stringToBase64 = utf8.fuse(base64);
-class SetPin extends StatefulWidget{
+
+class SetPin extends StatefulWidget {
   @override
   _Pin createState() => _Pin();
 }
-class _Pin extends State<SetPin>{
+
+class _Pin extends State<SetPin> {
   Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,15 +27,17 @@ class _Pin extends State<SetPin>{
     );
   }
 }
-class OtpScreen extends StatefulWidget{
+
+class OtpScreen extends StatefulWidget {
   @override
   _OtpScreen createState() => _OtpScreen();
 }
-class _OtpScreen extends State<OtpScreen>{
-  PinCon dbPin = new PinCon();
-  String datapin,datapintamp;
 
-  List<String> currentPin = ["","","",""];
+class _OtpScreen extends State<OtpScreen> {
+  PinCon dbPin = new PinCon();
+  String datapin, datapintamp;
+
+  List<String> currentPin = ["", "", "", ""];
   TextEditingController pinOneController = TextEditingController();
   TextEditingController pinTwoController = TextEditingController();
   TextEditingController pinThreeController = TextEditingController();
@@ -38,7 +46,8 @@ class _OtpScreen extends State<OtpScreen>{
     borderRadius: BorderRadius.circular(10.0),
 //    borderSide: BorderSide(color: Colors.grey),
   );
-  int pinIndex =0;
+  int pinIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -46,13 +55,14 @@ class _OtpScreen extends State<OtpScreen>{
         children: <Widget>[
           Expanded(
             child: Container(
-              alignment: Alignment(0,0.5),
+              alignment: Alignment(0, 0.5),
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Set Pin Anda", style: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),),
-                  Text("Set Pin Anda dengan ketentuan:\n- Terdiri dari 4 Angka",style: TextStyle(color: Colors.white),),
+                  Text("Set Pin Awal Anda", style: TextStyle(fontSize: 25,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),),
                   SizedBox(height: 40.0,),
                   buildpinrow()
                 ],
@@ -72,19 +82,19 @@ class _OtpScreen extends State<OtpScreen>{
       children: <Widget>[
         PinNumber(
           outlineInputBorder: outlineInputBorder,
-          textEditingController : pinOneController,
+          textEditingController: pinOneController,
         ),
         PinNumber(
           outlineInputBorder: outlineInputBorder,
-          textEditingController : pinTwoController,
+          textEditingController: pinTwoController,
         ),
         PinNumber(
           outlineInputBorder: outlineInputBorder,
-          textEditingController : pinThreeController,
+          textEditingController: pinThreeController,
         ),
         PinNumber(
           outlineInputBorder: outlineInputBorder,
-          textEditingController : pinFourController,
+          textEditingController: pinFourController,
         )
       ],
     );
@@ -104,19 +114,19 @@ class _OtpScreen extends State<OtpScreen>{
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   KeyboarNumber(
-                    n:1,
+                    n: 1,
                     onPressed: () {
                       pinIndexSetup("1");
                     },
                   ),
                   KeyboarNumber(
-                    n:2,
+                    n: 2,
                     onPressed: () {
                       pinIndexSetup("2");
                     },
                   ),
                   KeyboarNumber(
-                    n:3,
+                    n: 3,
                     onPressed: () {
                       pinIndexSetup("3");
                     },
@@ -128,19 +138,19 @@ class _OtpScreen extends State<OtpScreen>{
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   KeyboarNumber(
-                    n:4,
+                    n: 4,
                     onPressed: () {
                       pinIndexSetup("4");
                     },
                   ),
                   KeyboarNumber(
-                    n:5,
+                    n: 5,
                     onPressed: () {
                       pinIndexSetup("5");
                     },
                   ),
                   KeyboarNumber(
-                    n:6,
+                    n: 6,
                     onPressed: () {
                       pinIndexSetup("6");
                     },
@@ -152,26 +162,26 @@ class _OtpScreen extends State<OtpScreen>{
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   KeyboarNumber(
-                    n:7,
+                    n: 7,
                     onPressed: () {
                       pinIndexSetup("7");
                     },
                   ),
                   KeyboarNumber(
-                    n:8,
+                    n: 8,
                     onPressed: () {
                       pinIndexSetup("8");
                     },
                   ),
                   KeyboarNumber(
-                    n:9,
+                    n: 9,
                     onPressed: () {
                       pinIndexSetup("9");
                     },
                   ),
 
                 ],
-              ),Row(
+              ), Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Container(
@@ -182,7 +192,7 @@ class _OtpScreen extends State<OtpScreen>{
                     ),
                   ),
                   KeyboarNumber(
-                    n:0,
+                    n: 0,
                     onPressed: () {
                       pinIndexSetup("0");
                     },
@@ -208,30 +218,34 @@ class _OtpScreen extends State<OtpScreen>{
 
   //menentukan index, dan validasi
   void pinIndexSetup(String s) {
-    if(pinIndex==0){
-      pinIndex=1;
+    if (pinIndex == 0) {
+      pinIndex = 1;
     }
-    else if(pinIndex<4){
-      pinIndex+=1;
+    else if (pinIndex < 4) {
+      pinIndex += 1;
     }
-    setPin(pinIndex,s);
-    currentPin[pinIndex-1] = s;
-    String strPin="";
-    currentPin.forEach((e){
-      strPin+=e;
+    setPin(pinIndex, s);
+    currentPin[pinIndex - 1] = s;
+    String strPin = "";
+    currentPin.forEach((e) {
+      strPin += e;
     });
-    if(pinIndex==4){ //validasi
-      if(strPin.length==4){
+    if (pinIndex == 4) { //validasi
+      if (strPin.length == 4) {
         String tamp = stringToBase64.encode(strPin);
         Pin p = new Pin(pin: tamp);
         PinCon dbPin = new PinCon();
         dbPin.update(p);
         Widget okButton = FlatButton(
           child: Text("OK"),
-          onPressed: () { Navigator.of(context).pushNamedAndRemoveUntil('/main', ModalRoute.withName('/')); },
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                '/main', ModalRoute.withName('/'));
+          },
         );
         AlertDialog alert = AlertDialog(
-          title: Text("PIN Berhasil Di set", style: TextStyle(color: Colors.green),),
+          title: Text(
+            "PIN Berhasil Di set", style: TextStyle(color: Colors.green),),
           content: Text("Pin anda telah berhasil diubah!"),
           actions: [
             okButton,
@@ -244,10 +258,13 @@ class _OtpScreen extends State<OtpScreen>{
           },
         );
       }
-      else{
+      else {
         Widget okButton = FlatButton(
           child: Text("OK"),
-          onPressed: () { Navigator.of(context).pushNamedAndRemoveUntil('/setpin', ModalRoute.withName('/')); },
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                '/setpin', ModalRoute.withName('/'));
+          },
         );
         AlertDialog alert = AlertDialog(
           title: Text("PIN Gagal Di set", style: TextStyle(color: Colors.red),),
@@ -264,40 +281,39 @@ class _OtpScreen extends State<OtpScreen>{
         );
       }
     }
-
   }
 
   //set text field / pin num
-  setPin(int n, String text){
-    switch(n){
+  setPin(int n, String text) {
+    switch (n) {
       case 1:
-        pinOneController.text=text;
+        pinOneController.text = text;
         break;
       case 2:
-        pinTwoController.text=text;
+        pinTwoController.text = text;
         break;
       case 3:
-        pinThreeController.text=text;
+        pinThreeController.text = text;
         break;
       case 4:
-        pinFourController.text=text;
+        pinFourController.text = text;
         break;
     }
   }
 
   //clear inputan pin
-  clearPin(){
-    if(pinIndex==0){
-      pinIndex=0;
+  clearPin() {
+    if (pinIndex == 0) {
+      pinIndex = 0;
     }
-    else if(pinIndex==4){
+    else if (pinIndex == 4) {
       setPin(pinIndex, "");
-      currentPin[pinIndex-1]="";
+      currentPin[pinIndex - 1] = "";
       pinIndex--;
     }
-    else{
+    else {
       setPin(pinIndex, "");
-      currentPin[pinIndex-1]="";
+      currentPin[pinIndex - 1] = "";
       pinIndex--;
     }
   }
@@ -306,6 +322,7 @@ class _OtpScreen extends State<OtpScreen>{
 class KeyboarNumber extends StatelessWidget {
   final int n;
   final Function() onPressed;
+
   KeyboarNumber({this.n, this.onPressed});
 
   @override
@@ -339,10 +356,12 @@ class KeyboarNumber extends StatelessWidget {
 
 }
 
-class PinNumber extends StatelessWidget{
+class PinNumber extends StatelessWidget {
   final TextEditingController textEditingController;
   final OutlineInputBorder outlineInputBorder;
+
   PinNumber({this.textEditingController, this.outlineInputBorder});
+
   @override
   Widget build(BuildContext context) {
     return Container(

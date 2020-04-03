@@ -64,4 +64,11 @@ class HistoryCon extends DBLite {
     final data = await db.rawQuery(sql);
     return data.toList();
   }
+
+  Future<List> getAllHistoryListByName(String name) async {
+    Database db = await this.initDb();
+    final sql = 'SELECT * FROM ${DBLite.HISTORY_TABLE} where kategori = "$name" ORDER BY id DESC';
+    final data = await db.rawQuery(sql);
+    return data.toList();
+  }
 }
