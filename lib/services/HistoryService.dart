@@ -52,7 +52,7 @@ class HistoryCon extends DBLite {
 
   Future<List> getHistoryList(int jumlah) async {
     Database db = await this.initDb();
-    final sql = 'SELECT * FROM ${DBLite.HISTORY_TABLE} ORDER BY id DESC LIMIT ?';
+    final sql = 'SELECT * FROM ${DBLite.HISTORY_TABLE} ORDER BY date DESC, id DESC LIMIT ?';
     List<dynamic> params = [jumlah];
     final data = await db.rawQuery(sql, params);
     return data.toList();
@@ -60,14 +60,14 @@ class HistoryCon extends DBLite {
 
   Future<List> getAllHistoryList() async {
     Database db = await this.initDb();
-    final sql = 'SELECT * FROM ${DBLite.HISTORY_TABLE} ORDER BY id DESC';
+    final sql = 'SELECT * FROM ${DBLite.HISTORY_TABLE} ORDER BY date DESC, id DESC';
     final data = await db.rawQuery(sql);
     return data.toList();
   }
 
   Future<List> getAllHistoryListByName(String name) async {
     Database db = await this.initDb();
-    final sql = 'SELECT * FROM ${DBLite.HISTORY_TABLE} where kategori = "$name" ORDER BY id DESC';
+    final sql = 'SELECT * FROM ${DBLite.HISTORY_TABLE} where kategori = "$name" ORDER BY date DESC, id DESC';
     final data = await db.rawQuery(sql);
     return data.toList();
   }

@@ -19,30 +19,33 @@ class _HistoryPageState extends State<HistoryPage>
   List<Widget> cardListFood = [];
   List<Widget> cardListEntertain = [];
   List<Widget> cardListshopping = [];
+  List<Widget> cardListPemasukan= [];
 
   void getList() async {
     List cList = new List();
     List cListFood = new List();
     List cListEntertain = new List();
     List cListShopping = new List();
+    List cListPemasukan = new List();
     List<Widget> _cardList = new List();
     List<Widget> _cardListFood = new List();
     List<Widget> _cardListEntertain = new List();
     List<Widget> _cardListShopping = new List();
+    List<Widget> _cardListPemasukan = new List();
     cList = await dbHistory.getAllHistoryList();
     cListFood = await dbHistory.getAllHistoryListByName("Makanan");
     cListEntertain = await dbHistory.getAllHistoryListByName("Hiburan");
     cListShopping = await dbHistory.getAllHistoryListByName("Belanja");
-
-    String tgl = '';
+    cListPemasukan = await dbHistory.getAllHistoryListByName("Pemasukan");
     Widget dateText;
     Color col;
     String tag;
 
     if (cList.length != 0) {
+      String tgl = '';
       cList.forEach(
         (history) {
-          if (history['tag'] == '0') {
+          if (history['tag'] == '+') {
             col = Color.fromRGBO(61, 153, 75, 0.8);
             tag = '+';
           } else {
@@ -93,9 +96,10 @@ class _HistoryPageState extends State<HistoryPage>
     }
 
     if (cListFood.length != 0) {
+      String tgl = '';
       cListFood.forEach(
         (history) {
-          if (history['tag'] == '0') {
+          if (history['tag'] == '+') {
             col = Color.fromRGBO(61, 153, 75, 0.8);
             tag = '+';
           } else {
@@ -146,9 +150,10 @@ class _HistoryPageState extends State<HistoryPage>
     }
 
     if (cListEntertain.length != 0) {
+      String tgl = '';
       cListEntertain.forEach(
         (history) {
-          if (history['tag'] == '0') {
+          if (history['tag'] == '+') {
             col = Color.fromRGBO(61, 153, 75, 0.8);
             tag = '+';
           } else {
@@ -199,9 +204,10 @@ class _HistoryPageState extends State<HistoryPage>
     }
 
     if (cListShopping.length != 0) {
+      String tgl = '';
       cListShopping.forEach(
         (history) {
-          if (history['tag'] == '0') {
+          if (history['tag'] == '+') {
             col = Color.fromRGBO(61, 153, 75, 0.8);
             tag = '+';
           } else {
@@ -251,11 +257,66 @@ class _HistoryPageState extends State<HistoryPage>
       _cardListShopping.add(noHistory('images/noShoppingData.png'));
     }
 
+    if (cListPemasukan.length != 0) {
+      String tgl = '';
+      cListPemasukan.forEach(
+            (history) {
+          if (history['tag'] == '+') {
+            col = Color.fromRGBO(61, 153, 75, 0.8);
+            tag = '+';
+          } else {
+            col = Color.fromRGBO(237, 85, 85, 0.8);
+            tag = '-';
+          }
+
+          if (tgl != history['date']) {
+            tgl = history['date'];
+            dateText = Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Text(
+                tgl,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+            _cardListPemasukan.add(dateText);
+          }
+
+          HistoryCardsWithTag hc = new HistoryCardsWithTag(
+            title: history['deskripsi'],
+            value: history['jumlah'],
+            time: history['date'],
+            cPrice: col,
+            tag: tag,
+            tagLabel: history['kategori'],
+            klikUpdate: () => {
+              RouteEditForm(
+                History(
+                  id: history['id'],
+                  kategori: history['kategori'],
+                  deskripsi: history['deskripsi'],
+                  date: history['date'],
+                  jumlah: history['jumlah'],
+                  tag: history['tag'],
+                ),
+              ),
+            },
+          );
+          _cardListPemasukan.add(hc.cards());
+        },
+      );
+    } else {
+      _cardListPemasukan.add(noHistory('images/noMoneyData.png'));
+    }
+
     setState(() {
       this.cardListAll = _cardList;
       this.cardListFood = _cardListFood;
       this.cardListEntertain = _cardListEntertain;
       this.cardListshopping = _cardListShopping;
+      this.cardListPemasukan = _cardListPemasukan;
     });
   }
 
@@ -328,7 +389,7 @@ class _HistoryPageState extends State<HistoryPage>
   void initState() {
     super.initState();
     getList();
-    controller = TabController(vsync: this, length: 4);
+    controller = TabController(vsync: this, length: 5);
   }
 
   @override
@@ -368,6 +429,9 @@ class _HistoryPageState extends State<HistoryPage>
             Tab(
               child: Text("Belanja"),
             ),
+            Tab(
+              child: Text("Income"),
+            ),
           ],
         ),
       ),
@@ -400,6 +464,12 @@ class _HistoryPageState extends State<HistoryPage>
             child: ListView(
               scrollDirection: Axis.vertical,
               children: cardListshopping,
+            ),
+          ),Padding(
+            padding: EdgeInsets.only(left: 10.0, bottom: 10.0),
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: cardListPemasukan,
             ),
           ),
         ],
