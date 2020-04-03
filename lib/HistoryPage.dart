@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:money_management/services/HistoryService.dart';
+import 'EditForm.dart';
+import 'models/History.dart';
 
 class HistoryPage extends StatefulWidget {
   @override
@@ -13,53 +15,313 @@ class _HistoryPageState extends State<HistoryPage>
   Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
   Color secondaryColor = Colors.orangeAccent;
   HistoryCon dbHistory = new HistoryCon();
-  List<Widget> cardList = [];
+  List<Widget> cardListAll = [];
+  List<Widget> cardListFood = [];
+  List<Widget> cardListEntertain = [];
+  List<Widget> cardListshopping = [];
 
   void getList() async {
     List cList = new List();
+    List cListFood = new List();
+    List cListEntertain = new List();
+    List cListShopping = new List();
     List<Widget> _cardList = new List();
+    List<Widget> _cardListFood = new List();
+    List<Widget> _cardListEntertain = new List();
+    List<Widget> _cardListShopping = new List();
+    cList = await dbHistory.getAllHistoryList();
+    cListFood = await dbHistory.getAllHistoryListByName("Makanan");
+    cListEntertain = await dbHistory.getAllHistoryListByName("Hiburan");
+    cListShopping = await dbHistory.getAllHistoryListByName("Belanja");
+
     String tgl = '';
     Widget dateText;
-    cList = await dbHistory.getAllHistoryList();
     Color col;
     String tag;
-    cList.forEach(
-      (history) {
-        if (history['tag'] == '0') {
-          col = Color.fromRGBO(61, 153, 75, 0.8);
-          tag = '+';
-        } else {
-          col = Color.fromRGBO(237, 85, 85, 0.8);
-          tag = '-';
-        }
 
-        if (tgl != history['date']) {
-          tgl = history['date'];
-          dateText = Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            child: Text(
-              tgl,
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
+    if (cList.length != 0) {
+      cList.forEach(
+        (history) {
+          if (history['tag'] == '0') {
+            col = Color.fromRGBO(61, 153, 75, 0.8);
+            tag = '+';
+          } else {
+            col = Color.fromRGBO(237, 85, 85, 0.8);
+            tag = '-';
+          }
+
+          if (tgl != history['date']) {
+            tgl = history['date'];
+            dateText = Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Text(
+                tgl,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          );
-          _cardList.add(dateText);
-        }
+            );
+            _cardList.add(dateText);
+          }
 
-        HistoryCardsWithTag hc = new HistoryCardsWithTag(
-          title: history['deskripsi'],
-          value: history['jumlah'],
-          time: history['date'],
-          cPrice: col,
-          tag: tag,
-          tagLabel: history['kategori'],
-        );
-        _cardList.add(hc.cards());
-      },
+          HistoryCardsWithTag hc = new HistoryCardsWithTag(
+            title: history['deskripsi'],
+            value: history['jumlah'],
+            time: history['date'],
+            cPrice: col,
+            tag: tag,
+            tagLabel: history['kategori'],
+            klikUpdate: () => {
+              RouteEditForm(
+                History(
+                  id: history['id'],
+                  kategori: history['kategori'],
+                  deskripsi: history['deskripsi'],
+                  date: history['date'],
+                  jumlah: history['jumlah'],
+                  tag: history['tag'],
+                ),
+              ),
+            },
+          );
+          _cardList.add(hc.cards());
+        },
+      );
+    } else {
+      _cardList.add(noHistory('images/taskwithpeople.png'));
+    }
+
+    if (cListFood.length != 0) {
+      cListFood.forEach(
+        (history) {
+          if (history['tag'] == '0') {
+            col = Color.fromRGBO(61, 153, 75, 0.8);
+            tag = '+';
+          } else {
+            col = Color.fromRGBO(237, 85, 85, 0.8);
+            tag = '-';
+          }
+
+          if (tgl != history['date']) {
+            tgl = history['date'];
+            dateText = Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Text(
+                tgl,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+            _cardListFood.add(dateText);
+          }
+
+          HistoryCardsWithTag hc = new HistoryCardsWithTag(
+            title: history['deskripsi'],
+            value: history['jumlah'],
+            time: history['date'],
+            cPrice: col,
+            tag: tag,
+            tagLabel: history['kategori'],
+            klikUpdate: () => {
+              RouteEditForm(
+                History(
+                  id: history['id'],
+                  kategori: history['kategori'],
+                  deskripsi: history['deskripsi'],
+                  date: history['date'],
+                  jumlah: history['jumlah'],
+                  tag: history['tag'],
+                ),
+              ),
+            },
+          );
+          _cardListFood.add(hc.cards());
+        },
+      );
+    } else {
+      _cardListFood.add(noHistory('images/noFoodData.png'));
+    }
+
+    if (cListEntertain.length != 0) {
+      cListEntertain.forEach(
+        (history) {
+          if (history['tag'] == '0') {
+            col = Color.fromRGBO(61, 153, 75, 0.8);
+            tag = '+';
+          } else {
+            col = Color.fromRGBO(237, 85, 85, 0.8);
+            tag = '-';
+          }
+
+          if (tgl != history['date']) {
+            tgl = history['date'];
+            dateText = Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Text(
+                tgl,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+            _cardListEntertain.add(dateText);
+          }
+
+          HistoryCardsWithTag hc = new HistoryCardsWithTag(
+            title: history['deskripsi'],
+            value: history['jumlah'],
+            time: history['date'],
+            cPrice: col,
+            tag: tag,
+            tagLabel: history['kategori'],
+            klikUpdate: () => {
+              RouteEditForm(
+                History(
+                  id: history['id'],
+                  kategori: history['kategori'],
+                  deskripsi: history['deskripsi'],
+                  date: history['date'],
+                  jumlah: history['jumlah'],
+                  tag: history['tag'],
+                ),
+              ),
+            },
+          );
+          _cardListEntertain.add(hc.cards());
+        },
+      );
+    } else {
+      _cardListEntertain.add(noHistory('images/noEntertaintData.png'));
+    }
+
+    if (cListShopping.length != 0) {
+      cListShopping.forEach(
+        (history) {
+          if (history['tag'] == '0') {
+            col = Color.fromRGBO(61, 153, 75, 0.8);
+            tag = '+';
+          } else {
+            col = Color.fromRGBO(237, 85, 85, 0.8);
+            tag = '-';
+          }
+
+          if (tgl != history['date']) {
+            tgl = history['date'];
+            dateText = Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Text(
+                tgl,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+            _cardListShopping.add(dateText);
+          }
+
+          HistoryCardsWithTag hc = new HistoryCardsWithTag(
+            title: history['deskripsi'],
+            value: history['jumlah'],
+            time: history['date'],
+            cPrice: col,
+            tag: tag,
+            tagLabel: history['kategori'],
+            klikUpdate: () => {
+              RouteEditForm(
+                History(
+                  id: history['id'],
+                  kategori: history['kategori'],
+                  deskripsi: history['deskripsi'],
+                  date: history['date'],
+                  jumlah: history['jumlah'],
+                  tag: history['tag'],
+                ),
+              ),
+            },
+          );
+          _cardListShopping.add(hc.cards());
+        },
+      );
+    } else {
+      _cardListShopping.add(noHistory('images/noShoppingData.png'));
+    }
+
+    setState(() {
+      this.cardListAll = _cardList;
+      this.cardListFood = _cardListFood;
+      this.cardListEntertain = _cardListEntertain;
+      this.cardListshopping = _cardListShopping;
+    });
+  }
+
+  Widget noHistory(String url) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 30.0,
+        vertical: 12.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 100,
+          ),
+          Text(
+            'Ow Snap!',
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          Image.asset(
+            url,
+            height: 280,
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          Text(
+            'Belum ada data yang dapat ditampilkan',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
-    setState(() => this.cardList = _cardList);
+  }
+
+  void RouteEditForm(History edit) async {
+    var kategori = await navigateToEditForm(context, edit);
+    if (kategori != null) {
+      await dbHistory.updateHistory(kategori).then((total) {
+        getList();
+      });
+    }
+  }
+
+  Future<History> navigateToEditForm(BuildContext context, History kat) async {
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return EditForm(kat);
+        },
+      ),
+    );
+    return result;
   }
 
   @override
@@ -116,61 +378,28 @@ class _HistoryPageState extends State<HistoryPage>
             padding: EdgeInsets.only(left: 10.0, bottom: 10.0),
             child: ListView(
               scrollDirection: Axis.vertical,
-              children: cardList,
+              children: cardListAll,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 10.0, bottom: 10.0),
             child: ListView(
               scrollDirection: Axis.vertical,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0, top: 20.0, bottom: 15.0),
-                  child: Text(
-                    '29 Januari 2020',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              children: cardListFood,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 10.0, bottom: 10.0),
             child: ListView(
               scrollDirection: Axis.vertical,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0, top: 20.0, bottom: 15.0),
-                  child: Text(
-                    '29 Januari 2020',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              children: cardListEntertain,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 10.0, bottom: 10.0),
             child: ListView(
               scrollDirection: Axis.vertical,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0, top: 20.0, bottom: 15.0),
-                  child: Text(
-                    '29 Januari 2020',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              children: cardListshopping,
             ),
           ),
         ],
@@ -186,14 +415,17 @@ class HistoryCardsWithTag {
   Color cPrice;
   String tagLabel;
   String tag;
+  VoidCallback klikUpdate;
 
-  HistoryCardsWithTag(
-      {this.title,
-      this.value,
-      this.time,
-      this.cPrice,
-      this.tag,
-      this.tagLabel});
+  HistoryCardsWithTag({
+    this.title,
+    this.value,
+    this.time,
+    this.cPrice,
+    this.tag,
+    this.tagLabel,
+    this.klikUpdate,
+  });
 
   Widget cards() {
     return Card(
@@ -257,8 +489,8 @@ class HistoryCardsWithTag {
               color: cPrice,
               fontWeight: FontWeight.bold,
             ),
-//        onTap: (){Navigator.pushNamed(context, '/ubahlimit');},
           ),
+          onTap: klikUpdate,
         ),
       ),
     );

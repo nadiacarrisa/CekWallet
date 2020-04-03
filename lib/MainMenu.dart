@@ -8,7 +8,6 @@ import 'services/DBlite.dart';
 import 'services/HistoryService.dart';
 
 class MainMenu extends StatefulWidget {
-
   @override
   MainMenuState createState() => MainMenuState();
 }
@@ -21,8 +20,6 @@ class MainMenuState extends State<MainMenu> {
   DBLite dbHelper = new DBLite();
   HistoryCon dbHistory = new HistoryCon();
   HistoryCards historyCardList = new HistoryCards();
-
-
 
   void calTot() async {
     totalList = await dbHelper.calculateTotalPemasukan();
@@ -39,11 +36,11 @@ class MainMenuState extends State<MainMenu> {
       },
     );
 
-    if(masuk!=null && keluar !=null){
+    if (masuk != null && keluar != null) {
       _total = masuk - keluar;
-    }else if(keluar==null){
+    } else if (keluar == null) {
       _total = 0 + masuk;
-    }else{
+    } else {
       _total = 0 - keluar;
     }
     setState(() => this._total = _total);
@@ -57,44 +54,99 @@ class MainMenuState extends State<MainMenu> {
     cList = await dbHistory.getHistoryList(10);
     Color col;
     String tag;
-    cList.forEach(
-      (history) {
-        if (history['tag'] == '+') {
-          col = Color.fromRGBO(61, 153, 75, 0.8);
-        } else {
-          col = Color.fromRGBO(237, 85, 85, 0.8);
-        }
+    if (cList.length != 0) {
+      cList.forEach(
+        (history) {
+          if (history['tag'] == '+') {
+            col = Color.fromRGBO(61, 153, 75, 0.8);
+          } else {
+            col = Color.fromRGBO(237, 85, 85, 0.8);
+          }
 
-        if (tgl != history['date']) {
-          tgl = history['date'];
-          dateText = Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            child: Text(
-              tgl,
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
+          if (tgl != history['date']) {
+            tgl = history['date'];
+            dateText = Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Text(
+                tgl,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          );
-          _cardList.add(dateText);
-        }
+            );
+            _cardList.add(dateText);
+          }
 
-        HistoryCards hc = new HistoryCards(
-          id: history['id'],
-          title: history['deskripsi'],
-          value: history['jumlah'],
-          time: history['date'],
-          cPrice: col,
-          tag: history['tag'],
-          monthYear: history['monthYear'],
-          tagLabel: history['kategori'],
-          klikUpdate: ()=>{RouteEditForm(History(id: history['id'], kategori: history['kategori'], deskripsi: history['deskripsi'], date: history['date'],jumlah: history['jumlah'], tag: history['tag'], bulanTahun: history['monthYear']))}
-        );
-        _cardList.add(hc.cards());
-      },
-    );
+          HistoryCards hc = new HistoryCards(
+            id: history['id'],
+            title: history['deskripsi'],
+            value: history['jumlah'],
+            time: history['date'],
+            cPrice: col,
+            tag: history['tag'],
+            tagLabel: history['kategori'],
+            klikUpdate: () => {
+              RouteEditForm(
+                History(
+                  id: history['id'],
+                  kategori: history['kategori'],
+                  deskripsi: history['deskripsi'],
+                  date: history['date'],
+                  jumlah: history['jumlah'],
+                  tag: history['tag'],
+                  bulanTahun: history['monthYear'],
+                ),
+              ),
+            },
+          );
+          _cardList.add(hc.cards());
+        },
+      );
+    } else {
+      _cardList.add(noHistory());
+    }
+
     setState(() => this.cardList = _cardList);
+  }
+
+  Widget noHistory() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 5.0,
+        vertical: 12.0,
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            'Ow Snap!',
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          Image.asset(
+            'images/taskwithpeople.png',
+            height: 280,
+          ),
+          SizedBox(
+            height: 15.0,
+          ),
+          Text(
+            'Belum ada data yang dapat ditampilkan',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -106,14 +158,14 @@ class MainMenuState extends State<MainMenu> {
 
   Future<History> navigateToIncomeForm(
       BuildContext context, History kat) async {
-      var result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) {
-            return IncomeForm(kat);
-          },
-        ),
-      );
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return IncomeForm(kat);
+        },
+      ),
+    );
     return result;
   }
 
@@ -130,8 +182,7 @@ class MainMenuState extends State<MainMenu> {
     return result;
   }
 
-  Future<History> navigateToEditForm(
-      BuildContext context, History kat) async {
+  Future<History> navigateToEditForm(BuildContext context, History kat) async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -153,11 +204,10 @@ class MainMenuState extends State<MainMenu> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.android),
-              color: Colors.white,
-              iconSize: 30.0,
-              onPressed: () {},
+            Image.asset(
+              'images/wang_bold.png',
+              width: 100,
+              height: 50,
             ),
             IconButton(
               icon: Icon(Icons.settings),
@@ -464,7 +514,7 @@ class MainMenuState extends State<MainMenu> {
     }
   }
 
-  void RouteEditForm(History edit) async{
+  void RouteEditForm(History edit) async {
     var kategori = await navigateToEditForm(context, edit);
     if (kategori != null) {
       await dbHistory.updateHistory(kategori).then((total) {
@@ -473,7 +523,6 @@ class MainMenuState extends State<MainMenu> {
       });
     }
   }
-
 }
 
 class CustomShapeClipper extends CustomClipper<Path> {
@@ -503,13 +552,16 @@ class HistoryCards {
   VoidCallback klikUpdate;
 
   HistoryCards(
-      {this.id,this.title,
+      {this.id,
+      this.title,
       this.value,
       this.time,
       this.cPrice,
       this.tag,
       this.tagLabel,
-      this.monthYear, this.klikUpdate});
+      this.monthYear,
+      this.klikUpdate});
+
   Widget cards() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
@@ -563,9 +615,10 @@ class HistoryCards {
                   Text(
                     title,
                     style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold),
+                      fontSize: 18.0,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -585,5 +638,3 @@ class HistoryCards {
     );
   }
 }
-
-
