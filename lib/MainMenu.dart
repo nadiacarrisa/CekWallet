@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:money_management/HistoryPage.dart';
 import 'EditForm.dart';
 import 'ExpenseForm.dart';
 import 'IncomeForm.dart';
@@ -7,7 +6,6 @@ import 'dart:async';
 import 'models/History.dart';
 import 'services/DBlite.dart';
 import 'services/HistoryService.dart';
-import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 
 class MainMenu extends StatefulWidget {
   @override
@@ -97,6 +95,7 @@ class MainMenuState extends State<MainMenu> {
                   date: history['date'],
                   jumlah: history['jumlah'],
                   tag: history['tag'],
+                  bulanTahun: history['monthYear'],
                 ),
               ),
             },
@@ -549,18 +548,19 @@ class HistoryCards {
   Color cPrice;
   String tagLabel;
   String tag;
+  String monthYear;
   VoidCallback klikUpdate;
 
-  HistoryCards({
-    this.id,
-    this.title,
-    this.value,
-    this.time,
-    this.cPrice,
-    this.tag,
-    this.tagLabel,
-    this.klikUpdate,
-  });
+  HistoryCards(
+      {this.id,
+      this.title,
+      this.value,
+      this.time,
+      this.cPrice,
+      this.tag,
+      this.tagLabel,
+      this.monthYear,
+      this.klikUpdate});
 
   Widget cards() {
     return Card(
