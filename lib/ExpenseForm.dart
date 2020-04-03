@@ -11,82 +11,95 @@ import 'services/DBlite.dart';
 class ExpenseForm extends StatefulWidget {
   final String jenis;
   final History pengeluaran;
+
   ExpenseForm(this.jenis, this.pengeluaran);
 
   @override
-  _ExpenseFormState createState() => _ExpenseFormState(this.pengeluaran, this.jenis);
+  _ExpenseFormState createState() =>
+      _ExpenseFormState(this.pengeluaran, this.jenis);
 }
 
-class _ExpenseFormState extends State<ExpenseForm> with Validation{
+class _ExpenseFormState extends State<ExpenseForm> with Validation {
   LimitCon limitDb = LimitCon();
   History pengeluaranState;
   String jenisState;
+
   _ExpenseFormState(this.pengeluaranState, this.jenisState);
 
   TextEditingController deskController = TextEditingController();
-  TextEditingController jumlahController = MoneyMaskedTextController(initialValue: 0,thousandSeparator: '', precision: 0,decimalSeparator: '');
+  TextEditingController jumlahController = MoneyMaskedTextController(
+      initialValue: 0,
+      thousandSeparator: '',
+      precision: 0,
+      decimalSeparator: '');
 
   final formKey = GlobalKey<FormState>();
-  List limit,total;
+  List limit, total;
   String jumlah = '';
   DateTime dateTime = DateTime.now();
 
-
-  void isLimited(History k) async{
-    var jml,expense;
+  void isLimited(History k) async {
+    var jml, expense;
     print(k.kategori);
     limit = await LimitCon().checkLimit(k);
     limit.forEach(
-          (jmlLimit) {
-            jml = jmlLimit['jumlah'];
-          },
+      (jmlLimit) {
+        jml = jmlLimit['jumlah'];
+      },
     );
     total = await LimitCon().checkExpense(k);
     total.forEach(
-          (jmlLimit) {
-            expense = jmlLimit['Total'];
-            if(expense==null)
-              expense=0;
-          },
+      (jmlLimit) {
+        expense = jmlLimit['Total'];
+        if (expense == null) expense = 0;
+      },
     );
     String formatter = DateFormat("MM yyyy").format(DateTime.now()).toString();
-    if(jml!=null && formatter == k.bulanTahun){
-      if(k.jumlah + expense > 0.75 * jml){
+    if (jml != null && formatter == k.bulanTahun) {
+      if (k.jumlah + expense > 0.75 * jml) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text("AWAS"),
               content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
-              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(15)),
               actions: [
                 FlatButton(
-                  child: Text("Batal", style: TextStyle(color: Colors.red),),
-                  onPressed: () {
-                     Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: Text("Lanjut"),
+                  child: Text(
+                    "Batal",
+                    style: TextStyle(color: Colors.red),
+                  ),
                   onPressed: () {
                     Navigator.pop(context);
-                    Navigator.pop(context,k);
+                  },
+                ),
+                RaisedButton(
+                  color: Color.fromRGBO(0, 149, 218, 1),
+                  child: Text(
+                    "Lanjut",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context, k);
                   },
                 ),
               ],
             );
           },
         );
-      }
-      else{
-        Navigator.pop(context,k);
+      } else {
+        Navigator.pop(context, k);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
     if (pengeluaranState != null) {
       deskController.text = pengeluaranState.deskripsi;
       jumlahController.text = pengeluaranState.jumlah.toString();
@@ -99,9 +112,10 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
         backgroundColor: Color.fromRGBO(0, 149, 218, 1),
       ),
       body: ListView(
-        children: <Widget> [
+        children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(right: 10.0, left: 10.0, bottom: 10.0,top: 10),
+            padding:
+                EdgeInsets.only(right: 10.0, left: 10.0, bottom: 10.0, top: 10),
             child: Container(
               width: double.infinity,
               height: 75.0,
@@ -110,14 +124,23 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                 elevation: 2.0,
                 child: ListTile(
                   leading: Icon(Icons.calendar_today),
-                  title: Text('Tanggal', style: TextStyle(fontSize: 15,)),
+                  title: Text('Tanggal',
+                      style: TextStyle(
+                        fontSize: 15,
+                      )),
                   subtitle: Text(
                       DateFormat('dd MMMM yyyy').format(dateTime).toString(),
-                      style: TextStyle(fontSize: 25,)
-                  ),
-                  onTap: (){
-                    showDatePicker(context: context, initialDate: DateTime.now(),firstDate: DateTime(2019), lastDate: DateTime(2021)).then((date){
-                      if(date!=null){
+                      style: TextStyle(
+                        fontSize: 25,
+                      )),
+                  onTap: () {
+                    showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2019),
+                            lastDate: DateTime(2021))
+                        .then((date) {
+                      if (date != null) {
                         setState(() {
                           dateTime = date;
                         });
@@ -128,11 +151,12 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
               ),
             ),
           ),
-
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0)),
             ),
             child: Padding(
               padding: EdgeInsets.only(left: 15, right: 15),
@@ -143,13 +167,14 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                     Padding(
                       padding: EdgeInsets.only(top: 10),
                       child: ListTile(
-                        title: Text('${widget.jenis}',
+                        title: Text(
+                          '${widget.jenis}',
                           style: TextStyle(fontSize: 15),
                         ),
                       ),
                     ),
-                    Padding (
-                      padding: EdgeInsets.only(top:10.0, bottom:15.0),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 15.0),
                       child: TextFormField(
                         controller: deskController,
                         keyboardType: TextInputType.text,
@@ -161,14 +186,14 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                           ),
                         ),
                         validator: validateName,
-                        onSaved: (String value) { //KETIKA LOLOS VALIDASI
-
+                        onSaved: (String value) {
+                          //KETIKA LOLOS VALIDASI
                         },
                       ),
                     ),
 
-                    Padding (
-                      padding: EdgeInsets.only(top:10.0, bottom:15.0),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 15.0),
                       child: TextFormField(
                         controller: jumlahController,
                         keyboardType: TextInputType.number,
@@ -180,17 +205,18 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                           ),
                         ),
                         validator: validateValue,
-                        onSaved: (String value) { //KETIKA LOLOS VALIDASI
+                        onSaved: (String value) {
+                          //KETIKA LOLOS VALIDASI
                           jumlah = value;
                         },
                       ),
                     ),
 
                     // tombol button
-                    Padding (
-                      padding: EdgeInsets.only(top:10.0, bottom:15.0),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 15.0),
                       child: Row(
-                        children: <Widget> [
+                        children: <Widget>[
                           // tombol simpan
                           Expanded(
                             child: Material(
@@ -199,29 +225,39 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation{
                               color: Color.fromRGBO(232, 108, 0, 1),
                               child: MaterialButton(
                                 onPressed: () {
-                                  if(formKey.currentState.validate()){
+                                  if (formKey.currentState.validate()) {
                                     formKey.currentState.save();
                                     if (pengeluaranState == null) {
-                                      pengeluaranState = History.withMontYear('${widget.jenis}',
+                                      pengeluaranState = History.withMontYear(
+                                          '${widget.jenis}',
                                           int.parse(jumlahController.text),
-                                          DateFormat('dd MMMM yyyy').format(dateTime).toString(),
-                                          deskController.text, '-',
-                                          DateFormat('MM yyyy').format(dateTime).toString()
-                                      );
+                                          DateFormat('dd MMMM yyyy')
+                                              .format(dateTime)
+                                              .toString(),
+                                          deskController.text,
+                                          '-',
+                                          DateFormat('MM yyyy')
+                                              .format(dateTime)
+                                              .toString());
                                     } else {
-                                      pengeluaranState.deskripsi = deskController.text;
-                                      pengeluaranState.jumlah = int.parse(jumlahController.text);
-                                      pengeluaranState.date = DateFormat('dd MMMM yyyy').format(dateTime).toString();
+                                      pengeluaranState.deskripsi =
+                                          deskController.text;
+                                      pengeluaranState.jumlah =
+                                          int.parse(jumlahController.text);
+                                      pengeluaranState.date =
+                                          DateFormat('dd MMMM yyyy')
+                                              .format(dateTime)
+                                              .toString();
                                     }
                                     this.isLimited(pengeluaranState);
                                   }
                                 },
-                                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
-                                child: Text('SIMPAN',
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 30.0),
+                                child: Text(
+                                  'SIMPAN',
                                   style: TextStyle(
-                                      fontSize: 15.0,
-                                      color: Colors.white
-                                  ),
+                                      fontSize: 15.0, color: Colors.white),
                                 ),
                               ),
                             ),
