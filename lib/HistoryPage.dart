@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:money_management/services/HistoryService.dart';
 import 'EditForm.dart';
 import 'models/History.dart';
@@ -498,6 +499,10 @@ class HistoryCardsWithTag {
   });
 
   Widget cards() {
+    FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
+        amount: value.toDouble()
+    );
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       child: Padding(
@@ -553,7 +558,7 @@ class HistoryCardsWithTag {
             ],
           ),
           trailing: Text(
-            '$tag' + ' Rp' + '$value',
+            '$tag' + ' Rp' +  fmf.output.withoutFractionDigits,
             style: TextStyle(
               fontSize: 18.0,
               color: cPrice,
@@ -586,6 +591,10 @@ class HistoryCardsWithOutTag {
   }
 
   Widget cards() {
+    FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
+        amount: value.toDouble()
+    );
+    
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       child: Padding(
@@ -621,7 +630,7 @@ class HistoryCardsWithOutTag {
             ],
           ),
           trailing: Text(
-            '$value',
+            fmf.output.withoutFractionDigits,
             style: TextStyle(
                 fontSize: 22.0,
                 color: Color.fromRGBO(0, 132, 219, 0.4),

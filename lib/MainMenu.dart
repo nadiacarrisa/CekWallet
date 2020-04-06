@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'EditForm.dart';
 import 'ExpenseForm.dart';
+import 'HistoryPage.dart';
 import 'IncomeForm.dart';
 import 'dart:async';
 import 'models/History.dart';
@@ -196,6 +198,23 @@ class MainMenuState extends State<MainMenu> {
 
   @override
   Widget build(BuildContext context) {
+    FlutterMoneyFormatter fmf;
+
+    String tot = '';
+
+    if(_total.toString().length > 12) {
+      tot = _total.toString().substring(0,9);
+      fmf = FlutterMoneyFormatter(
+        amount: double.parse(tot)
+      );
+      tot = fmf.output.withoutFractionDigits.toString() + '...';
+    } else {
+      fmf = FlutterMoneyFormatter(
+          amount: _total.toDouble()
+      );
+      tot = fmf.output.withoutFractionDigits;
+    }
+
     Color primaryColor = Color.fromRGBO(0, 149, 218, 1);
     return Scaffold(
       appBar: AppBar(
@@ -256,24 +275,24 @@ class MainMenuState extends State<MainMenu> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '$_total',
-                            textScaleFactor: 1.0,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          Text(
                             'Sisa Balance',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.0,
                             ),
                             textScaleFactor: 1.0,
+                          ),
+                          SizedBox(
+                            height: 7.0,
+                          ),
+                          Text(
+                            'Rp' + tot,
+                            textScaleFactor: 1.0,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
@@ -481,7 +500,18 @@ class MainMenuState extends State<MainMenu> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pushNamed(context, '/history');
+                        Navigator.of(context).push(
+                          MaterialPageRoute<String>(
+                            builder: (BuildContext context) {
+                              return HistoryPage();
+                            },
+                          ),
+                        ).then(
+                          (String value) {
+                            calTot();
+                            getList();
+                          },
+                        );
                       },
                     ),
                   )
@@ -563,6 +593,9 @@ class HistoryCards {
       this.klikUpdate});
 
   Widget cards() {
+    FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
+        amount: value.toDouble()
+    );
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       child: Padding(
@@ -625,7 +658,7 @@ class HistoryCards {
             ],
           ),
           trailing: Text(
-            '$tag' + ' Rp' + '$value',
+            '$tag' + ' Rp' + fmf.output.withoutFractionDigits,
             style: TextStyle(
               fontSize: 18.0,
               color: cPrice,
