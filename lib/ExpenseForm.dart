@@ -76,42 +76,36 @@ class _ExpenseFormState extends State<ExpenseForm> with Validation {
             if(expense==null) expense=0;
           },
     );
-
-      if(jml!=0){
-        if(k.jumlah + expense > 0.75 * jml){
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("AWAS"),
-                content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
-                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
-                actions: [
-                  FlatButton(
-                    child: Text("Batal", style: TextStyle(color: Colors.red),),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("Lanjut"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context,k);
-                    },
-                  ),
-                ],
-              );
-            },
+    if(k.jumlah + expense > 0.75 * jml){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("AWAS"),
+            content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
+            shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+            actions: [
+              FlatButton(
+                child: Text("Batal", style: TextStyle(color: Colors.red),),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Text("Lanjut"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context,k);
+                },
+              ),
+            ],
           );
-        }
-        else{
-          Navigator.pop(context,k);
-        }
-      }else{
-        Navigator.pop(context,k);
-      }
-
+        },
+      );
+    }
+    else{
+      Navigator.pop(context,k);
+    }
   }
 
 

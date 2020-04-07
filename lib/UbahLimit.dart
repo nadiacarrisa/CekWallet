@@ -22,7 +22,7 @@ class _ubah extends State<UbahLimit> {
       precision: 0,
       decimalSeparator: '');
   Kategori _kat = Kategori.makanan;
-  String dropdownValue = '';
+  String dropdownValue;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +51,7 @@ class _ubah extends State<UbahLimit> {
                   DropdownButton<String>(
                     iconSize: 24,
                     hint: Text('Kategori'),
+                    value: dropdownValue,
                     elevation: 16,
                     underline: Container(
                       height: 2,
