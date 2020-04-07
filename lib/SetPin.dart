@@ -245,7 +245,7 @@ class _OtpScreen extends State<OtpScreen> {
         );
         AlertDialog alert = AlertDialog(
           title: Text(
-            "PIN Berhasil Di set", style: TextStyle(color: Colors.green),),
+            "PIN Berhasil di Set", style: TextStyle(color: Colors.green),),
           content: Text("Pin anda telah berhasil diubah!"),
           actions: [
             okButton,
@@ -267,7 +267,7 @@ class _OtpScreen extends State<OtpScreen> {
           },
         );
         AlertDialog alert = AlertDialog(
-          title: Text("PIN Gagal Di set", style: TextStyle(color: Colors.red),),
+          title: Text("PIN Gagal di Set", style: TextStyle(color: Colors.red),),
           content: Text("PIN harus terdiri dari 4 angka!"),
           actions: [
             okButton,
