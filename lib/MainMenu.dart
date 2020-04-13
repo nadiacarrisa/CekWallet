@@ -184,7 +184,8 @@ class MainMenuState extends State<MainMenu> {
     return result;
   }
 
-  Future<History> navigateToEditForm(BuildContext context, History kat) async {
+  Future<History> navigateToEditForm(
+      BuildContext context, History kat) async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(
