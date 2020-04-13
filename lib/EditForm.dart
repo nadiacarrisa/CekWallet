@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:flutter/src/material/date_picker.dart';
+import 'package:money_management/services/HistoryService.dart';
 import 'package:money_management/services/LimitService.dart';
 import 'Validator.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +17,7 @@ class EditForm extends StatefulWidget {
 
 class _EditFormState extends State<EditForm> with Validation{
   LimitCon limitDb = LimitCon();
+  HistoryCon historyDb = HistoryCon();
   History editState;
   _EditFormState(this.editState);
 
@@ -58,6 +60,7 @@ class _EditFormState extends State<EditForm> with Validation{
     limit.forEach(
           (jmlLimit) {
             jml = jmlLimit['jumlah'];
+            if(jml==null) jml=0;
           },
     );
     total = await LimitCon().checkExpense(k.kategori, k.bulanTahun);
@@ -68,36 +71,65 @@ class _EditFormState extends State<EditForm> with Validation{
               expense=0;
           },
     );
-      if(k.jumlah + expense > 0.75 * jml){
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("AWAS"),
-              content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
-              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
-              actions: [
-                FlatButton(
-                  child: Text("Batal", style: TextStyle(color: Colors.red),),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: Text("Lanjut"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context,k);
-                  },
-                ),
-              ],
-            );
-          },
+    if(k.jumlah + expense > 0.75 * jml){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("AWAS"),
+            content: Text("Melebihi PENGELUARAN Anda Bulan ini!!!"),
+            shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+            actions: [
+              FlatButton(
+                child: Text("Batal", style: TextStyle(color: Colors.red),),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Text("Lanjut"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context,k);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    else{
+      Navigator.pop(context,k);
+    }
+  }
+
+  void deleteItem(History his){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("AWAS"),
+          content: Text("Anda yakin akan menghapus item ini?"),
+          shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+          actions: [
+            FlatButton(
+              child: Text("Batal", style: TextStyle(color: Colors.red),),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: Text("Iya"),
+              onPressed: () async {
+                await historyDb.deleteHistory(his);
+                Navigator.pop(context);
+                Navigator.pop(context,his);
+              },
+            ),
+          ],
         );
-      }
-      else{
-        Navigator.pop(context,k);
-      }
+      },
+    );
   }
 
   @override
@@ -326,6 +358,33 @@ class _EditFormState extends State<EditForm> with Validation{
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
                                 child: Text('SIMPAN',
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      color: Colors.white
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding (
+                      padding: EdgeInsets.only(top:10.0, bottom:15.0),
+                      child: Row(
+                        children: <Widget> [
+                          // tombol simpan
+                          Expanded(
+                            child: Material(
+                              elevation: 1.0,
+                              borderRadius: BorderRadius.circular(100.0),
+                              color: Color.fromRGBO(0, 149, 218, 1),
+                              child: MaterialButton(
+                                onPressed: () {
+                                  deleteItem(editState);
+                                },
+                                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                                child: Text('HAPUS',
                                   style: TextStyle(
                                       fontSize: 15.0,
                                       color: Colors.white
