@@ -40,11 +40,14 @@ class MainMenuState extends State<MainMenu> {
 
     if (masuk != null && keluar != null) {
       _total = masuk - keluar;
+    } else if (keluar == null && masuk == null) {
+      _total = 0;
     } else if (keluar == null) {
       _total = 0 + masuk;
     } else {
       _total = 0 - keluar;
     }
+
     setState(() => this._total = _total);
   }
 
@@ -203,8 +206,15 @@ class MainMenuState extends State<MainMenu> {
 
     String tot = '';
 
-    if(_total.toString().length > 12) {
+    if(_total.toString().length > 10) {
+      if(_total.toString().length == 9)
       tot = _total.toString().substring(0,9);
+      if(_total.toString().length %3 == 0)
+        tot = _total.toString().substring(0,9);
+      if(_total.toString().length %3 == 2)
+        tot = _total.toString().substring(0,8);
+      if(_total.toString().length %3 == 1)
+        tot = _total.toString().substring(0,7);
       fmf = FlutterMoneyFormatter(
         amount: double.parse(tot)
       );
