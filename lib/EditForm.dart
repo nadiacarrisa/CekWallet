@@ -39,6 +39,7 @@ class _EditFormState extends State<EditForm> with Validation{
           (jmlLimit) {
         setState(() {
           Jmllimit = jmlLimit['jumlah'];
+          if(Jmllimit==null) Jmllimit=0;
         });
       },
     );
@@ -341,19 +342,41 @@ class _EditFormState extends State<EditForm> with Validation{
                               color: Color.fromRGBO(232, 108, 0, 1),
                               child: MaterialButton(
                                 onPressed: () {
-                                  if(formKey.currentState.validate()){
-                                      formKey.currentState.save();
-                                      editState.deskripsi = deskController.text;
-                                      editState.jumlah = int.parse(jumlahController.text);
-                                      editState.date = Formatter;
-                                      editState.kategori = dropdownJenis == 'Pemasukan'? dropdownJenis : dropdownKategori;
-                                      editState.tag = dropdownJenis == 'Pemasukan'? '+' : '-';
-                                      editState.bulanTahun = FormatterMonthYear;
-                                      if(dropdownJenis == 'Pemasukan'){
-                                        Navigator.pop(context,editState);
-                                      }else{
-                                        this.isLimited(editState);
-                                      }
+                                  if(Jmllimit==null){
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("PERHATIAN"),
+                                          content: Text("Silahkan pilih kategroi yang akan dipilih!!!"),
+                                          shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+                                          actions: [
+                                            FlatButton(
+                                              child: Text("Ok"),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                  else{
+                                    if(formKey.currentState.validate()){
+                                    formKey.currentState.save();
+                                    editState.deskripsi = deskController.text;
+                                    editState.jumlah = int.parse(jumlahController.text);
+                                    editState.date = Formatter;
+                                    editState.kategori = dropdownJenis == 'Pemasukan'? dropdownJenis : dropdownKategori;
+                                    editState.tag = dropdownJenis == 'Pemasukan'? '+' : '-';
+                                    editState.bulanTahun = FormatterMonthYear;
+                                    if(dropdownJenis == 'Pemasukan'){
+                                    Navigator.pop(context,editState);
+                                    }else{
+                                    this.isLimited(editState);
+                                    }
+                                    }
                                   }
                                 },
                                 padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
@@ -373,7 +396,7 @@ class _EditFormState extends State<EditForm> with Validation{
                       padding: EdgeInsets.only(top:10.0, bottom:15.0),
                       child: Row(
                         children: <Widget> [
-                          // tombol simpan
+                          // tombol delete
                           Expanded(
                             child: Material(
                               elevation: 1.0,
