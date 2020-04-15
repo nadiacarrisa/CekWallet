@@ -453,11 +453,11 @@ class MainMenuState extends State<MainMenu> {
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                  'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
-                                  'Lorem Ipsum has been the industry Lorem Ipsum is simply dummy text',
+                                  'Lihat lebih banyak tentang kami dan aplikasi kami\n',
                                   textAlign: TextAlign.left,
                                   textScaleFactor: 0.5,
                                   style: TextStyle(
+                                    fontSize: 18,
                                     color: Colors.grey,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -466,12 +466,14 @@ class MainMenuState extends State<MainMenu> {
                               Padding(
                                 padding: EdgeInsets.only(left: 12.0),
                                 child: Material(
-                                  borderRadius: BorderRadius.circular(100.0),
+                                  borderRadius: BorderRadius.circular(150.0),
                                   color: Colors.blueAccent.withOpacity(0.1),
                                   child: IconButton(
                                     icon: Icon(Icons.arrow_forward_ios),
                                     color: Colors.blueAccent.withOpacity(0.5),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, '/tentang');
+                                    },
                                   ),
                                 ),
                               ),
